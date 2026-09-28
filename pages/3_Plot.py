@@ -4,12 +4,12 @@ import pandas as pd
 st.title("Reservoir Plot")
 
 
-# Load and cache the reservoir data
+#load and cache the reservoir data
 @st.cache_data
 def load_data():
     df = pd.read_csv("reservoirs.csv")
 
-    # Rename columns to clear English names
+    #rename columns to clear English names
     df = df.rename(columns={
         "dato_Id": "date",
         "omrType": "area_type",
@@ -33,7 +33,7 @@ def load_data():
 df = load_data()
 
 
-# Select reservoir area
+#select reservoir area
 selected_area = st.selectbox(
     "Choose area",
     sorted(df["area"].unique())
@@ -42,7 +42,7 @@ selected_area = st.selectbox(
 filtered_df = df[df["area"] == selected_area].copy()
 
 
-# Select one column or all columns
+#select one column or all columns
 selected_column = st.selectbox(
     "Choose column",
     [
@@ -56,7 +56,7 @@ selected_column = st.selectbox(
 )
 
 
-# Month names used by the slider
+#month names used by the slider
 month_names = {
     "January": 1,
     "February": 2,
@@ -73,7 +73,7 @@ month_names = {
 }
 
 
-# Select a range of months
+#select a range of months
 selected_months = st.select_slider(
     "Choose months",
     options=list(month_names.keys()),
@@ -84,13 +84,13 @@ start_month = month_names[selected_months[0]]
 end_month = month_names[selected_months[1]]
 
 
-# Filter the data by selected months
+#filter the data by selected months
 filtered_df = filtered_df[
     filtered_df["date"].dt.month.between(start_month, end_month)
 ]
 
 
-# Plot all columns or the selected column
+#plot all columns or the selected column
 if selected_column == "All":
     st.line_chart(
         filtered_df,

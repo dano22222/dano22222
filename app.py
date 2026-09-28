@@ -1,5 +1,6 @@
 import streamlit as st
 
+#display the home page and introduce the reservoir application
 st.title("IND320 Project")
 
 st.write("Reservoir Data Analysis")

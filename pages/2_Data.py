@@ -1,13 +1,16 @@
 import streamlit as st
 import pandas as pd
 
+#display the title of the data page
 st.title("Reservoir Data")
 
 
+#load and cache the reservoir data to avoid unnecessary reloading
 @st.cache_data
 def load_data():
     df = pd.read_csv("reservoirs.csv")
 
+    #rename the original norwegian columns to clear english names
     df = df.rename(columns={
         "dato_Id": "date",
         "omrType": "area_type",
@@ -25,10 +28,13 @@ def load_data():
     return df
 
 
+#load the prepared reservoir data
 df = load_data()
 
+#select the numerical columns from the dataset
 numeric_columns = df.select_dtypes(include="number").columns
 
+#create one row for each numerical column using the first observations
 table_data = pd.DataFrame({
     "Column": numeric_columns,
     "First month": [
@@ -37,6 +43,7 @@ table_data = pd.DataFrame({
     ]
 })
 
+#display the first observations as small line charts inside the table
 st.dataframe(
     table_data,
     column_config={
