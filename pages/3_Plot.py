@@ -1,111 +1,120 @@
+
 import streamlit as st
-import pandas as pd
+import calendar
+from nve_api import load_reservoir_data
 
+# Page title
 st.title("Reservoir Plot")
+st.write("Explore Norwegian reservoir data from the NVE API.")
 
+# Load and cache the API data
+df = load_reservoir_data()
 
-#load and cache the reservoir data
-@st.cache_data
-def load_data():
-    df = pd.read_csv("reservoirs.csv")
+# Select the type of area
+selected_type = st.radio(
+    "Choose area type",
+    ["EL", "NO", "VASS"],
+    horizontal=True
+)
 
-    #rename columns to clear English names
-    df = df.rename(columns={
-        "dato_Id": "date",
-        "omrType": "area_type",
-        "omrnr": "area",
-        "iso_aar": "year",
-        "iso_uke": "week",
-        "fyllingsgrad": "fill_level",
-        "kapasitet_TWh": "capacity_TWh",
-        "fylling_TWh": "stored_energy_TWh",
-        "neste_Publiseringsdato": "next_publication_date",
-        "fyllingsgrad_forrige_uke": "fill_level_previous_week",
-        "endring_fyllingsgrad": "change_in_fill_level"
-    })
+# Filter the dataset by area type
+type_df = df[df["area_type"] == selected_type]
 
-    df["date"] = pd.to_datetime(df["date"])
-    df = df.sort_values("date")
-
-    return df
-
-
-df = load_data()
-
-
-#select reservoir area
+# Select an area number
 selected_area = st.selectbox(
     "Choose area",
-    sorted(df["area"].unique())
+    sorted(type_df["area"].unique())
 )
 
-filtered_df = df[df["area"] == selected_area].copy()
+area_df = type_df[
+    type_df["area"] == selected_area
+].copy()
 
-
-#select one column or all columns
-selected_column = st.selectbox(
-    "Choose column",
-    [
-        "All",
-        "fill_level",
-        "capacity_TWh",
-        "stored_energy_TWh",
-        "fill_level_previous_week",
-        "change_in_fill_level"
-    ]
+# Select year
+available_years = sorted(
+    area_df["date"].dt.year.unique(),
+    reverse=True
 )
 
+selected_year = st.selectbox(
+    "Choose year",
+    available_years
+)
 
-#month names used by the slider
-month_names = {
-    "January": 1,
-    "February": 2,
-    "March": 3,
-    "April": 4,
-    "May": 5,
-    "June": 6,
-    "July": 7,
-    "August": 8,
-    "September": 9,
-    "October": 10,
-    "November": 11,
-    "December": 12
-}
-
-
-#select a range of months
+# Select months using a slider
 selected_months = st.select_slider(
     "Choose months",
-    options=list(month_names.keys()),
-    value=("January", "January")
+    options=list(range(1, 13)),
+    value=(1, 1),
+    format_func=lambda m: calendar.month_name[m]
 )
 
-start_month = month_names[selected_months[0]]
-end_month = month_names[selected_months[1]]
+start_month, end_month = selected_months
+
+# Filter by year and selected months
+filtered_df = area_df[
+    (area_df["date"].dt.year == selected_year) &
+    (area_df["date"].dt.month.between(
+        start_month, end_month
+    ))
+].sort_values("date")
 
 
-#filter the data by selected months
-filtered_df = filtered_df[
-    filtered_df["date"].dt.month.between(start_month, end_month)
+
+# Download only the observations selected by the user
+if not filtered_df.empty:
+    csv_data = filtered_df.to_csv(index=False).encode("utf-8")
+
+    st.download_button(
+        label="Download selected reservoir data",
+        data=csv_data,
+        file_name=(
+            f"reservoir_{selected_type}_{selected_area}_"
+            f"{selected_year}_{start_month:02d}-{end_month:02d}.csv"
+        ),
+        mime="text/csv"
+    )
+
+
+# Select one variable or all variables
+numeric_columns = [
+    "fill_level",
+    "capacity_TWh",
+    "stored_energy_TWh",
+    "fill_level_previous_week",
+    "change_in_fill_level"
 ]
 
+selected_column = st.selectbox(
+    "Choose column",
+    ["All"] + numeric_columns
+)
 
-#plot all columns or the selected column
-if selected_column == "All":
-    st.line_chart(
-        filtered_df,
-        x="date",
-        y=[
-            "fill_level",
-            "capacity_TWh",
-            "stored_energy_TWh",
-            "fill_level_previous_week",
-            "change_in_fill_level"
-        ]
-    )
+# Display the selected data
+st.subheader(
+    f"{selected_type} Area {selected_area} – {selected_year}"
+)
+
+if filtered_df.empty:
+    st.info("No observations for the selected period.")
 else:
-    st.line_chart(
-        filtered_df,
-        x="date",
-        y=selected_column
+    if selected_column == "All":
+        # Separate plots keep variables with different units readable
+        for column in numeric_columns:
+            st.write(f"**{column}**")
+            st.line_chart(
+                filtered_df,
+                x="date",
+                y=column
+            )
+    else:
+        st.line_chart(
+            filtered_df,
+            x="date",
+            y=selected_column
+        )
+
+    st.caption(
+        f"Showing {len(filtered_df)} observations "
+        f"from the NVE API."
     )
