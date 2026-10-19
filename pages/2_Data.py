@@ -18,9 +18,53 @@ selected_type = st.radio(
 )
 
 # Filter the data by the selected area type
-type_df = df[df["area_type"] == selected_type]
+type_df = df[df["area_type"] == selected_type].copy()
 
-# Select an area number
+# Select the relevant numerical columns
+numeric_columns = [
+    "fill_level",
+    "capacity_TWh",
+    "stored_energy_TWh",
+    "fill_level_previous_week",
+    "change_in_fill_level"
+]
+
+# Create a summary table showing all areas of the selected type
+# Each row represents an area number, with line charts over time
+summary_rows = []
+
+for area_number, area_data in type_df.groupby("area"):
+    area_data = area_data.sort_values("date")
+
+    row = {"Area": area_number}
+
+    for column in numeric_columns:
+        row[column] = area_data[column].dropna().tolist()
+
+    summary_rows.append(row)
+
+summary_df = pd.DataFrame(summary_rows).sort_values("Area")
+
+# Display line charts for every area number
+st.subheader(f"{selected_type} Area Overview")
+st.write(
+    "Each row shows the development of reservoir variables "
+    "over time for one area."
+)
+
+st.dataframe(
+    summary_df,
+    column_config={
+        column: st.column_config.LineChartColumn(
+            column.replace("_", " ").title()
+        )
+        for column in numeric_columns
+    },
+    hide_index=True,
+    use_container_width=True
+)
+
+# Select an individual area number
 selected_area = st.selectbox(
     "Choose area",
     sorted(type_df["area"].unique())
@@ -33,34 +77,10 @@ filtered_df = type_df[
 
 st.write(f"Showing data for {selected_type} area {selected_area}")
 
-# Select the relevant numerical columns
-numeric_columns = [
-    "fill_level",
-    "capacity_TWh",
-    "stored_energy_TWh",
-    "fill_level_previous_week",
-    "change_in_fill_level"
-]
-
-# Create a summary table with small line charts
-table_data = pd.DataFrame({
-    "Column": numeric_columns,
-    "First observations": [
-        filtered_df[column].head(4).tolist()
-        for column in numeric_columns
-    ]
-})
-
-st.dataframe(
-    table_data,
-    column_config={
-        "First observations": st.column_config.LineChartColumn(
-            "First observations"
-        )
-    },
-    hide_index=True
-)
-
 # Display the underlying dataset
 st.subheader("Reservoir Dataset")
-st.dataframe(filtered_df, hide_index=True)
+st.dataframe(
+    filtered_df,
+    hide_index=True,
+    use_container_width=True
+)

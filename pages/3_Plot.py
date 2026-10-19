@@ -7,32 +7,39 @@ from nve_api import load_reservoir_data
 st.title("Reservoir Plot")
 st.write("Explore Norwegian reservoir data from the NVE API.")
 
-# Load and cache the API data
+# Load reservoir data directly from NVE
 df = load_reservoir_data()
 
-# Select the type of area
+# Select the geographical area type
 selected_type = st.radio(
     "Choose area type",
     ["EL", "NO", "VASS"],
     horizontal=True
 )
 
-# Filter the dataset by area type
-type_df = df[df["area_type"] == selected_type]
+# Filter observations by area type
+type_df = df[df["area_type"] == selected_type].copy()
 
-# Select an area number
+# Allow users to compare all areas or select one area
+available_areas = sorted(type_df["area"].unique().tolist())
+
 selected_area = st.selectbox(
     "Choose area",
-    sorted(type_df["area"].unique())
+    ["All areas"] + available_areas,
+    index=1
 )
 
-area_df = type_df[
-    type_df["area"] == selected_area
-].copy()
+# Filter by area if a specific area is selected
+if selected_area == "All areas":
+    area_df = type_df.copy()
+else:
+    area_df = type_df[
+        type_df["area"] == selected_area
+    ].copy()
 
-# Select year
+# Select an available year
 available_years = sorted(
-    area_df["date"].dt.year.unique(),
+    area_df["date"].dt.year.dropna().astype(int).unique(),
     reverse=True
 )
 
@@ -41,7 +48,7 @@ selected_year = st.selectbox(
     available_years
 )
 
-# Select months using a slider
+# Select the month interval
 selected_months = st.select_slider(
     "Choose months",
     options=list(range(1, 13)),
@@ -51,32 +58,36 @@ selected_months = st.select_slider(
 
 start_month, end_month = selected_months
 
-# Filter by year and selected months
+# Filter observations by the selected year and months
 filtered_df = area_df[
     (area_df["date"].dt.year == selected_year) &
     (area_df["date"].dt.month.between(
         start_month, end_month
     ))
-].sort_values("date")
+].sort_values(["date", "area"]).copy()
 
-
-
-# Download only the observations selected by the user
+# Download only the selected observations
 if not filtered_df.empty:
-    csv_data = filtered_df.to_csv(index=False).encode("utf-8")
+    csv_data = filtered_df.to_csv(
+        index=False
+    ).encode("utf-8")
+
+    area_filename = (
+        "all" if selected_area == "All areas"
+        else str(selected_area)
+    )
 
     st.download_button(
         label="Download selected reservoir data",
         data=csv_data,
         file_name=(
-            f"reservoir_{selected_type}_{selected_area}_"
+            f"reservoir_{selected_type}_{area_filename}_"
             f"{selected_year}_{start_month:02d}-{end_month:02d}.csv"
         ),
         mime="text/csv"
     )
 
-
-# Select one variable or all variables
+# Select one or all numerical variables
 numeric_columns = [
     "fill_level",
     "capacity_TWh",
@@ -91,28 +102,55 @@ selected_column = st.selectbox(
 )
 
 # Display the selected data
+area_label = (
+    "All areas" if selected_area == "All areas"
+    else f"Area {selected_area}"
+)
+
 st.subheader(
-    f"{selected_type} Area {selected_area} – {selected_year}"
+    f"{selected_type} {area_label} | {selected_year}"
 )
 
 if filtered_df.empty:
     st.info("No observations for the selected period.")
+
 else:
-    if selected_column == "All":
-        # Separate plots keep variables with different units readable
-        for column in numeric_columns:
+    # Determine which variables to plot
+    columns_to_plot = (
+        numeric_columns
+        if selected_column == "All"
+        else [selected_column]
+    )
+
+    for column in columns_to_plot:
+
+        if selected_column == "All":
             st.write(f"**{column}**")
+
+        if selected_area == "All areas":
+            # One line for each area number
+            plot_df = filtered_df.pivot_table(
+                index="date",
+                columns="area",
+                values=column,
+                aggfunc="mean"
+            ).sort_index()
+
+            # Use descriptive labels for the area lines
+            plot_df.columns = [
+                f"{selected_type} Area {area}"
+                for area in plot_df.columns
+            ]
+
+            st.line_chart(plot_df)
+
+        else:
+            # Show the selected area's development over time
             st.line_chart(
                 filtered_df,
                 x="date",
                 y=column
             )
-    else:
-        st.line_chart(
-            filtered_df,
-            x="date",
-            y=selected_column
-        )
 
     st.caption(
         f"Showing {len(filtered_df)} observations "
