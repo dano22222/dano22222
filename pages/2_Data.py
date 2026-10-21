@@ -1,55 +1,86 @@
+
 import streamlit as st
 import pandas as pd
+from nve_api import load_reservoir_data
 
-#display the title of the data page
+# Display the title of the data page
 st.title("Reservoir Data")
+st.write("Explore Norwegian reservoir statistics from the NVE API.")
 
+# Load the reservoir data directly from NVE
+df = load_reservoir_data()
 
-#load and cache the reservoir data to avoid unnecessary reloading
-@st.cache_data
-def load_data():
-    df = pd.read_csv("reservoirs.csv")
+# Select the type of geographical area
+selected_type = st.radio(
+    "Choose area type",
+    ["EL", "NO", "VASS"],
+    horizontal=True
+)
 
-    #rename the original norwegian columns to clear english names
-    df = df.rename(columns={
-        "dato_Id": "date",
-        "omrType": "area_type",
-        "omrnr": "area",
-        "iso_aar": "year",
-        "iso_uke": "week",
-        "fyllingsgrad": "fill_level",
-        "kapasitet_TWh": "capacity_TWh",
-        "fylling_TWh": "stored_energy_TWh",
-        "neste_Publiseringsdato": "next_publication_date",
-        "fyllingsgrad_forrige_uke": "fill_level_previous_week",
-        "endring_fyllingsgrad": "change_in_fill_level"
-    })
+# Filter the data by the selected area type
+type_df = df[df["area_type"] == selected_type].copy()
 
-    return df
+# Select the relevant numerical columns
+numeric_columns = [
+    "fill_level",
+    "capacity_TWh",
+    "stored_energy_TWh",
+    "fill_level_previous_week",
+    "change_in_fill_level"
+]
 
+# Create a summary table showing all areas of the selected type
+# Each row represents an area number, with line charts over time
+summary_rows = []
 
-#load the prepared reservoir data
-df = load_data()
+for area_number, area_data in type_df.groupby("area"):
+    area_data = area_data.sort_values("date")
 
-#select the numerical columns from the dataset
-numeric_columns = df.select_dtypes(include="number").columns
+    row = {"Area": area_number}
 
-#create one row for each numerical column using the first observations
-table_data = pd.DataFrame({
-    "Column": numeric_columns,
-    "First month": [
-        df[column].head(4).tolist()
-        for column in numeric_columns
-    ]
-})
+    for column in numeric_columns:
+        row[column] = area_data[column].dropna().tolist()
 
-#display the first observations as small line charts inside the table
+    summary_rows.append(row)
+
+summary_df = pd.DataFrame(summary_rows).sort_values("Area")
+
+# Display line charts for every area number
+st.subheader(f"{selected_type} Area Overview")
+st.write(
+    "Each row shows the development of reservoir variables "
+    "over time for one area."
+)
+
 st.dataframe(
-    table_data,
+    summary_df,
     column_config={
-        "First month": st.column_config.LineChartColumn(
-            "First month"
+        column: st.column_config.LineChartColumn(
+            column.replace("_", " ").title()
         )
+        for column in numeric_columns
     },
-    hide_index=True
+    hide_index=True,
+    use_container_width=True
+)
+
+# Select an individual area number
+selected_area = st.selectbox(
+    "Choose area",
+    sorted(type_df["area"].unique())
+)
+
+# Show data for the selected area
+filtered_df = type_df[
+    type_df["area"] == selected_area
+].sort_values("date")
+
+st.write(f"Showing data for {selected_type} area {selected_area}")
+
+# Display the underlying dataset
+st.subheader("Reservoir Dataset")
+st.dataframe(
+    filtered_df,
+    hide_index=True,
+    use_container_width=True
 )
