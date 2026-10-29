@@ -20,3 +20,5 @@ Sources:
 - https://biapi.nve.no/magasinstatistikk/api/Magasinstatistikk/HentOmr%C3%A5der
 - https://gis3.nve.no/map/rest/services/Mapservices/Omradekonsesjoner/MapServer/8
 - https://gis3.nve.no/map/rest/services/Mapservices/Administrasjon/MapServer/0
+
+Runtime packages are pinned to the exact tested versions to prevent the cloud build retaining an older, merely compatible cached installation. An upstream startup incompatibility is documented at https://github.com/streamlit/streamlit/issues/16341 ; this is background for dependency pinning, not a confirmed diagnosis of this app’s earlier loading screen.
