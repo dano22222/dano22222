@@ -3,7 +3,7 @@ import json
 import numpy as np
 import pandas as pd
 import pytest
-from src.weather import WEATHER_DIR,load_region,VARIABLES
+from src.weather import WEATHER_DIR,load_region,CORE_VARIABLES as VARIABLES
 
 @pytest.mark.skipif(not (WEATHER_DIR/'NO3_2024-01-01_2024-12-31_mean.parquet').exists(),reason='regional download still running')
 def test_completed_mean_matches_all_1000_points():
