@@ -1,0 +1,56 @@
+...F.                                                                    [100%]
+=================================== FAILURES ===================================
+_______________________ test_weather_missing_then_pilot ________________________
+
+    def test_weather_missing_then_pilot():
+        app=run_page('6_Weather.py')
+        assert not app.exception
+        with patch('nve_api.load_reservoir_data',return_value=reservoir_fixture()):
+>           app.radio[-1].set_value('Single-point pilot (not regional mean)').run()
+
+tests/test_streamlit.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.11/site-packages/streamlit/testing/v1/element_tree.py:474: in run
+    return self.root.run(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/streamlit/testing/v1/element_tree.py:3869: in run
+    widget_states = self.get_widget_states()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/streamlit/testing/v1/element_tree.py:3847: in get_widget_states
+    w = get_widget_state(node)
+        ^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/streamlit/testing/v1/element_tree.py:3757: in get_widget_state
+    return node._widget_state
+           ^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/streamlit/testing/v1/element_tree.py:2520: in _widget_state
+    if self.index is not None and len(self.options) > 0:
+       ^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Radio(key='shared_type', _value='Single-point pilot (not regional mean)', label='Choose area type', options=['EL', 'NO', 'VASS'])
+
+    @property
+    def index(self) -> int | None:
+        """The index of the current selection. (int)"""  # noqa: D400
+        if self.value is None:
+            return None
+        formatted_value = _format_value_for_widget(self.format_func, self.value)
+>       return self.options.index(formatted_value)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ValueError: 'Single-point pilot (not regional mean)' is not in list
+
+.venv/lib/python3.11/site-packages/streamlit/testing/v1/element_tree.py:2491: ValueError
+----------------------------- Captured stderr call -----------------------------
+2026-10-29 02:01:44.508 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call -------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:508 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+=============================== warnings summary ===============================
+tests/test_streamlit.py::test_plot_default_and_comparison
+  /Users/daniaromar/Documents/ChatGPT/IND320/.venv/lib/python3.11/site-packages/streamlit/elements/lib/built_in_chart_utils.py:620: Pandas4Warning: The inplace keyword in DataFrame.reset_index is deprecated and will be removed in a future version (PDEP-8).
+  See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+    df.reset_index(inplace=True)  # noqa: PD002
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_streamlit.py::test_weather_missing_then_pilot - ValueError:...
+1 failed, 4 passed, 1 warning in 4.77s
