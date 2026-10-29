@@ -1,4 +1,4 @@
-"""Build the Part 3 notebook from reproducible code and explanatory text."""
+"""build the part 3 notebook from reproducible code and explanatory text."""
 from pathlib import Path
 import nbformat as nb
 ROOT=Path(__file__).resolve().parents[1]
@@ -77,7 +77,9 @@ if not regional_complete:
 assert len(weather) == 8784 and weather.index.is_unique
 assert np.isfinite(weather.to_numpy()).all()
 display(weather.describe())
-display(weather.head())''')
+display(weather.head())
+if regional_complete and (ROOT / "reports/weather_audit.json").exists():
+    display(pd.Series(json.loads((ROOT / "reports/weather_audit.json").read_text())).to_frame("verified result"))''')
 md('''## 4. Precipitation outliers: DCT high pass and robust SPC
 
 An orthonormal DCT-II represents the original hourly precipitation. Coefficient k has frequency k/(2 N Δt). Frequencies at or below 1/30 days form the smooth baseline; subtracting it gives the high-pass residuals. The entire year's residual median and Gaussian-consistent median absolute deviation (MAD) define robust limits at median ±3 MAD. Adding the baseline yields limits on the **original precipitation scale**. Only original precipitation, limits and contrasting outliers are plotted; residual/SATV values are not plotted.
@@ -102,6 +104,20 @@ print(lof_summary)
 display(lof_table.loc[lof_table.outlier].sort_values("lof_score", ascending=False).head(20))
 fig.savefig(ROOT / "reports/figures/temperature_lof.png", dpi=160, bbox_inches="tight")
 lof_table.to_csv(ROOT / "reports/lof_results.csv")''')
+md("""### Parameter sensitivity
+
+Outlier counts depend on modelling choices. The following checks vary the DCT cutoff and the assumed LOF contamination while holding other defaults fixed. More flags do not establish worse data quality; they show sensitivity to the definition of an unusual observation.""")
+code("""#compare parameter choices without displaying additional duplicate figures
+sensitivity = []
+for cutoff in [7, 30, 90]:
+    figure, table, summary = spc_analysis(weather.precipitation, cutoff_days=cutoff, n_sigma=3)
+    plt.close(figure)
+    sensitivity.append({"method": "spc", "parameter": f"cutoff {cutoff} days", "flagged": summary["outliers"]})
+for fraction in [.005, .01, .02]:
+    figure, table, summary = lof_analysis(weather.temperature_2m, contamination=fraction, n_neighbors=48)
+    plt.close(figure)
+    sensitivity.append({"method": "lof", "parameter": f"contamination {100*fraction:g}%", "flagged": summary["outliers"]})
+display(pd.DataFrame(sensitivity))""")
 md('''## 6. Reservoir filling: prepare a regular weekly series
 
 Use one reservoir area's filling fraction, not an average of overlapping national and regional statistics. The included NVE snapshot makes the analysis reproducible offline; the Streamlit app continues to retrieve current data from NVE. Missing weeks and duplicate timestamps are rejected rather than silently interpolated. Several years are needed to distinguish annual seasonality from trend.''')
@@ -124,7 +140,7 @@ print("seasonal range:", float(stl_result.seasonal.max() - stl_result.seasonal.m
 print("residual standard deviation:", float(stl_result.resid.std()))''')
 md('''## 8. Spectrogram of the same filling series
 
-A Hann-window spectrogram uses 156 weekly samples per window with 130 samples overlap. Each segment is linearly detrended. Frequencies are cycles per 52-week year; 1 cycle/year represents annual variation. The frequency resolution is 52/156 = 1/3 cycles/year. Longer windows improve frequency resolution while reducing temporal localisation. Colour represents log power density; a small floor is used only to display logarithms.''')
+A Hann-window spectrogram uses 156 weekly samples per window with 130 samples overlap. Each segment is linearly detrended. Frequencies are cycles per 52-week year; 1 cycle/year represents annual variation. The frequency resolution is 52/156 = 1/3 cycles/year. Longer windows improve frequency resolution while reducing temporal localisation. Colour represents log power density; a small floor is used only to display logarithms. The plot focuses on 0–6 cycles/year; the full computed spectrum extends to the weekly Nyquist frequency of 26 cycles/year. Only complete windows are shown, so their centres do not reach the endpoints.''')
 code('''#use exactly the same weekly filling series as the stl analysis
 fig, spectrum = spectrogram_analysis(filling, window=156, overlap=130)
 plt.show()
@@ -168,6 +184,16 @@ Review the development log and geographic assumptions, run this notebook on the 
 - API quotas: https://open-meteo.com/en/pricing
 
 The full methodological record is in `reports/ASSUMPTIONS.md`.''')
+md("""## Appendix: shared function implementations
+
+These are the actual functions imported and tested above. Printing their source keeps the PDF reviewable without duplicating production logic in the notebook. Their imports and supporting helpers are maintained in the accompanying repository modules. Printing source does not launch any extra downloads.""")
+code("""#include the actual reusable implementations in the executed report
+import inspect
+from src.weather import download_point, download_region
+from src.geography import sample_polygon
+for function in [sample_polygon, download_point, download_region, spc_analysis, lof_analysis, stl_analysis, spectrogram_analysis]:
+    print(function.__name__)
+    print(inspect.getsource(function))""")
 notebook=nb.v4.new_notebook(cells=cells,metadata={'kernelspec':{'display_name':'Python 3','language':'python','name':'python3'},'language_info':{'name':'python','version':'3.11'}})
 path=ROOT/'notebooks/IND320_Project(P3).ipynb'
 nb.write(notebook,path);print(path)

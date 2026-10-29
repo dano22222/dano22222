@@ -1,4 +1,4 @@
-"""Render every saved notebook cell, code block and output into a readable PDF."""
+"""render every saved notebook cell, code block and output into a readable pdf."""
 from pathlib import Path
 import base64,io,json,re,textwrap
 from xml.sax.saxutils import escape
@@ -23,7 +23,7 @@ styles.add(ParagraphStyle('Text',fontName='Body',fontSize=9.5,leading=14,spaceAf
 styles.add(ParagraphStyle('CodeBlock',fontName='Mono',fontSize=7,leading=9,spaceAfter=8,
                           backColor=colors.HexColor('#f3f6f8'),borderPadding=6))
 for name,size in [('Title',22),('Heading1',17),('Heading2',13),('Heading3',11)]:
-    styles[name].fontName='BodyBold';styles[name].fontSize=size;styles[name].leading=size*1.25
+    styles[name].fontName='BodyBold';styles[name].fontSize=size;styles[name].leading=size*1.25;styles[name].keepWithNext=True
 story=[]
 
 def inline(text):

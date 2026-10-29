@@ -1,0 +1,20 @@
+{
+  "region": "NO3",
+  "points": 1000,
+  "hours": 8784,
+  "point_hours": 8784000,
+  "scalar_values": 17568000,
+  "missing_values": 0,
+  "unique_returned_grid_cells": 222,
+  "max_recomputed_mean_error": 0.0,
+  "temperature_range_c": [
+    -16.737799999475477,
+    24.328099996566774
+  ],
+  "precipitation_range_mm_h": [
+    0.0,
+    3.376699997290969
+  ],
+  "mean_annual_precipitation_mm": 1733.3377116454244,
+  "note": "sampled points sharing era5 cells are spatially dependent; temperature can also be elevation adjusted by the provider"
+}

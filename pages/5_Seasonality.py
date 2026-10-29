@@ -1,4 +1,4 @@
-"""Part 3 reservoir analyses reuse one selected area and the same weekly series."""
+"""part 3 reservoir analyses reuse one selected area and the same weekly series."""
 import streamlit as st
 import matplotlib.pyplot as plt
 from nve_api import load_reservoir_data
@@ -26,5 +26,5 @@ with b:
     overlap=st.slider('Overlap (weeks)',0,window-1,min(130,window-1))
     try:
         fig,result=spectrogram_analysis(series,window,overlap);st.pyplot(fig);plt.close(fig)
-        st.caption(f'Frequency resolution: {52/window:.3f} cycles/year. A frequency of 1 corresponds to an annual pattern. Longer windows improve frequency resolution but blur changes over time.')
+        st.caption(f'Frequency resolution: {52/window:.3f} cycles/year. A frequency of 1 corresponds to an annual pattern. Longer windows improve frequency resolution but blur changes over time. The plot focuses on 0–6 cycles/year; the full spectrum extends to 26. Only complete windows are shown.')
     except ValueError as e:st.warning(str(e))

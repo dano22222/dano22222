@@ -1,4 +1,4 @@
-"""Streamlit runtime tests use a deterministic NVE fixture, no database writes."""
+"""streamlit runtime tests use a deterministic nve fixture, no database writes."""
 from pathlib import Path
 from unittest.mock import patch
 import pandas as pd

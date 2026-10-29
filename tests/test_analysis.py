@@ -1,4 +1,4 @@
-"""Scientific checks using known signals, injected anomalies and invalid inputs."""
+"""scientific checks using known signals, injected anomalies and invalid inputs."""
 import numpy as np
 import pandas as pd
 import pytest
@@ -65,3 +65,9 @@ def test_weather_validation():
     with pytest.raises(ValueError):validate_hourly(df.iloc[:-1],'2024-01-01','2024-01-01')
     df.iloc[0,1]=-1
     with pytest.raises(ValueError):validate_hourly(df,'2024-01-01','2024-01-01')
+
+
+@pytest.mark.parametrize('method,frequency',[(spc_analysis,'7D'),(lof_analysis,'7D'),(stl_analysis,'h'),(spectrogram_analysis,'h')])
+def test_incorrect_time_units_rejected(method,frequency):
+    series=pd.Series(np.arange(300,dtype=float),index=pd.date_range('2020-01-01',periods=300,freq=frequency))
+    with pytest.raises(ValueError):method(series)

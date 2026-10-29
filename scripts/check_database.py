@@ -1,4 +1,4 @@
-"""Read only verification of the existing Part 2 MongoDB source."""
+"""read only verification of the existing part 2 mongodb source."""
 import argparse,os,json
 from pathlib import Path
 import certifi

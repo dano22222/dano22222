@@ -1,4 +1,4 @@
-"""Reusable Part 3 analyses. Inputs must be complete, regular time series."""
+"""reusable part 3 analyses. inputs must be complete, regular time series."""
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,7 +11,7 @@ from statsmodels.tsa.seasonal import STL
 
 
 def clean_series(series, minimum=8):
-    """Reject silent interpolation, irregular spacing, duplicates and nonfinite data."""
+    """reject silent interpolation, irregular spacing, duplicates and nonfinite data."""
     s = pd.Series(series).astype(float).sort_index()
     if not isinstance(s.index, pd.DatetimeIndex):
         raise ValueError('A DatetimeIndex is required.')
@@ -30,13 +30,15 @@ def style(ax, title, ylabel):
 
 
 def spc_analysis(series, cutoff_days=30., n_sigma=3.):
-    """DCT-II high pass; median and Gaussian-consistent MAD over the entire input.
+    """dct ii high pass; median and gaussian consistent mad over the entire input.
 
-    Frequencies are k/(2*N*dt). Keep periods >= cutoff_days in the baseline.
-    Plot baseline + residual median +/- n_sigma*MAD on the original scale.
-    These are descriptive robust control limits, not calibrated rain probabilities.
+    frequencies are k/(2*n*dt). keep periods >= cutoff_days in the baseline.
+    plot the baseline plus the residual median, with limits n_sigma times mad away.
+    these are descriptive robust control limits, not calibrated rain probabilities.
     """
     s = clean_series(series)
+    if s.index[1] - s.index[0] != pd.Timedelta(hours=1):
+        raise ValueError("spc expects hourly precipitation observations.")
     if cutoff_days <= 0 or not np.isfinite(cutoff_days) or n_sigma <= 0 or not np.isfinite(n_sigma):
         raise ValueError('Cutoff and sigma multiplier must be finite and positive.')
     dt_days = (s.index[1] - s.index[0]).total_seconds()/86400
@@ -69,12 +71,14 @@ def spc_analysis(series, cutoff_days=30., n_sigma=3.):
 
 
 def lof_analysis(series, contamination=.01, n_neighbors=48):
-    """LOF on standardized [temperature, 1-hour change] to detect unusual states.
+    """lof on standardized [temperature, 1 hour change] to detect unusual states.
 
-    The first change is set to zero; this boundary convention is explicit.
-    LOF is descriptive: the requested fraction is a modelling assumption.
+    the first change is set to zero; this boundary convention is explicit.
+    lof is descriptive: the requested fraction is a modelling assumption.
     """
     s = clean_series(series)
+    if s.index[1] - s.index[0] != pd.Timedelta(hours=1):
+        raise ValueError("lof expects hourly temperature observations.")
     if not 0 < contamination <= .5 or not 2 <= n_neighbors < len(s):
         raise ValueError('Use 0 < contamination <= .5 and 2 <= neighbors < N.')
     features = np.column_stack([s.values, s.diff().fillna(0).values])
@@ -91,10 +95,12 @@ def lof_analysis(series, contamination=.01, n_neighbors=48):
 
 
 def stl_analysis(series, seasonal=13, trend=105, robust=True, period=52):
-    """Annual seasonality approximated by 52 weekly samples; need >=2 cycles."""
+    """annual seasonality approximated by 52 weekly samples; need >=2 cycles."""
     if period < 2 or seasonal < 3 or seasonal % 2 != 1 or trend <= period or trend % 2 != 1:
         raise ValueError('Seasonal must be odd >=3; trend odd > period; period >=2.')
     s = clean_series(series, minimum=2*period)
+    if s.index[1] - s.index[0] != pd.Timedelta(days=7):
+        raise ValueError("stl expects weekly reservoir observations.")
     result = STL(s, period=period, seasonal=seasonal, trend=trend, robust=robust).fit()
     fig = result.plot();fig.set_size_inches(12,8)
     fig.axes[0].set_title('Reservoir filling: STL decomposition')
@@ -103,9 +109,9 @@ def stl_analysis(series, seasonal=13, trend=105, robust=True, period=52):
 
 
 def spectrogram_analysis(series, window=156, overlap=130):
-    """Hann-window power density, cycles/year; remove overall linear trend.
+    """hann window power density, cycles/year; remove overall linear trend.
 
-    Weekly sampling is assumed and checked. Resolution = 52/window cycles/year.
+    weekly sampling is assumed and checked. resolution = 52/window cycles/year.
     """
     if not isinstance(window, (int,np.integer)) or not isinstance(overlap,(int,np.integer)):
         raise ValueError('Window and overlap must be integers.')

@@ -1,4 +1,4 @@
-"""Single existing deployment entry point; keep the original Streamlit URL."""
+"""single existing deployment entry point; keep the original streamlit url."""
 import streamlit as st
 st.set_page_config(page_title='IND320 Reservoir Analysis',layout='wide')
 pages={

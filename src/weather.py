@@ -1,4 +1,4 @@
-"""Resumable ERA5 retrieval: bounded memory, explicit approval for bulk downloads."""
+"""resumable era5 retrieval: bounded memory, explicit approval for bulk downloads."""
 from pathlib import Path
 import hashlib
 import json
@@ -12,7 +12,7 @@ URL='https://archive-api.open-meteo.com/v1/archive'
 VARIABLES=['temperature_2m','precipitation']
 
 class WeatherRateLimit(RuntimeError):
-    """Stop and resume later; never silently bypass the provider's quota."""
+    """stop and resume later; never silently bypass the provider's quota."""
 
 def expected_hours(start,end):
     start=pd.Timestamp(start);end=pd.Timestamp(end)
@@ -41,7 +41,11 @@ def download_point(latitude,longitude,start,end,session=None):
             'start_date':str(start),'end_date':str(end),'hourly':','.join(VARIABLES),
             'models':'era5','timezone':'UTC','cell_selection':'land'},timeout=120)
         if response.status_code==429:
-            raise WeatherRateLimit('Open-Meteo quota reached. Cached points are safe; resume later.')
+            try:
+                reason = response.json().get('reason', 'quota reached')
+            except ValueError:
+                reason = 'quota reached'
+            raise WeatherRateLimit(f'Open-Meteo: {reason}. Cached points are safe; resume later.')
         if response.status_code>=500 and attempt<3:
             time.sleep(2**attempt);continue
         response.raise_for_status();break
@@ -56,11 +60,11 @@ def download_point(latitude,longitude,start,end,session=None):
     return df, {k:payload.get(k) for k in ['latitude','longitude','elevation','timezone','hourly_units']}
 
 def download_region(region,start,end,approved=False,max_points=None,delay=2.5):
-    """Lookup fixed coordinates, cache each point, and publish mean only if complete.
+    """lookup fixed coordinates, cache each point, and publish mean only if complete.
 
-    Year-long calls have weighted quota units. Stop on 429; reuse cached files
-    on the next invocation. Never round/deduplicate coordinates: elevation
-    adjustment and nearest-grid selection can differ between sampled points.
+    year long calls have weighted quota units. stop on 429; reuse cached files
+    on the next invocation. never round/deduplicate coordinates: elevation
+    adjustment and nearest grid selection can differ between sampled points.
     """
     points=pd.read_csv(ROOT/'data/regions/points.csv')
     points=points.loc[points.region==region].sort_values('point_id')

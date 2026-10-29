@@ -1,4 +1,4 @@
-"""Explicit CLI for approved, resumable weather downloads."""
+"""explicit cli for approved, resumable weather downloads."""
 import argparse,sys,json
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
