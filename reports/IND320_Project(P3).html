@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Notebook</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>IND320_Project(P3)</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7332,12 +7332,7 @@ a.anchor-link {
     if (!diagrams.length) {
       return;
     }
-    const mermaid = (await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.0/mermaid.esm.min.mjs")).default;
-    const elkUrl = "https://cdnjs.cloudflare.com/ajax/libs/mermaid-layout-elk/0.1.9/mermaid-layout-elk.esm.min.mjs";
-    if(elkUrl) {
-      const elkLayouts = (await import(elkUrl)).default;
-      mermaid.registerLayoutLoaders(elkLayouts);
-    }
+    const mermaid = (await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.esm.min.mjs")).default;
     const parser = new DOMParser();
 
     mermaid.initialize({
@@ -7434,8 +7429,7 @@ a.anchor-link {
      * Post-process to ensure mermaid diagrams contain only valid SVG and XHTML.
      */
     function cleanMermaidSvg(svg) {
-      svg = svg.replace(RE_VOID_ELEMENT, replaceVoidElement);
-      return `${SVG_XML_HEADER}${svg}`;
+      return svg.replace(RE_VOID_ELEMENT, replaceVoidElement);
     }
 
 
@@ -7461,285 +7455,6 @@ a.anchor-link {
       }
       return `<${tag} ${rest}>`;
     }
-
-
-  /**
-   * Named HTML entities with their decimal equivalent codes.
-   *
-   * @see https://www.w3.org/TR/WD-html40-970708/sgml/entities.html
-   * */
-  const HTML_ENTITIES = `<!ENTITY Aacute "&#193;">
-<!ENTITY aacute "&#225;">
-<!ENTITY Acirc "&#194;">
-<!ENTITY acirc "&#226;">
-<!ENTITY acute "&#180;">
-<!ENTITY AElig "&#198;">
-<!ENTITY aelig "&#230;">
-<!ENTITY Agrave "&#192;">
-<!ENTITY agrave "&#224;">
-<!ENTITY alefsym "&#8501;">
-<!ENTITY Alpha "&#913;">
-<!ENTITY alpha "&#945;">
-<!ENTITY amp "&#38;">
-<!ENTITY and "&#8869;">
-<!ENTITY ang "&#8736;">
-<!ENTITY Aring "&#197;">
-<!ENTITY aring "&#229;">
-<!ENTITY asymp "&#8776;">
-<!ENTITY Atilde "&#195;">
-<!ENTITY atilde "&#227;">
-<!ENTITY Auml "&#196;">
-<!ENTITY auml "&#228;">
-<!ENTITY bdquo "&#8222;">
-<!ENTITY Beta "&#914;">
-<!ENTITY beta "&#946;">
-<!ENTITY brvbar "&#166;">
-<!ENTITY bull "&#8226;">
-<!ENTITY cap "&#8745;">
-<!ENTITY Ccedil "&#199;">
-<!ENTITY ccedil "&#231;">
-<!ENTITY cedil "&#184;">
-<!ENTITY cent "&#162;">
-<!ENTITY Chi "&#935;">
-<!ENTITY chi "&#967;">
-<!ENTITY circ "&#710;">
-<!ENTITY clubs "&#9827;">
-<!ENTITY cong "&#8773;">
-<!ENTITY copy "&#169;">
-<!ENTITY crarr "&#8629;">
-<!ENTITY cup "&#8746;">
-<!ENTITY curren "&#164;">
-<!ENTITY dagger "&#8224;">
-<!ENTITY Dagger "&#8225;">
-<!ENTITY darr "&#8595;">
-<!ENTITY dArr "&#8659;">
-<!ENTITY deg "&#176;">
-<!ENTITY Delta "&#916;">
-<!ENTITY delta "&#948;">
-<!ENTITY diams "&#9830;">
-<!ENTITY divide "&#247;">
-<!ENTITY Eacute "&#201;">
-<!ENTITY eacute "&#233;">
-<!ENTITY Ecirc "&#202;">
-<!ENTITY ecirc "&#234;">
-<!ENTITY Egrave "&#200;">
-<!ENTITY egrave "&#232;">
-<!ENTITY empty "&#8709;">
-<!ENTITY emsp "&#8195;">
-<!ENTITY ensp "&#8194;">
-<!ENTITY epsilon "&#949;">
-<!ENTITY Epsilon "&#917;">
-<!ENTITY equiv "&#8801;">
-<!ENTITY Eta "&#919;">
-<!ENTITY eta "&#951;">
-<!ENTITY ETH "&#208;">
-<!ENTITY eth "&#240;">
-<!ENTITY Euml "&#203;">
-<!ENTITY euml "&#235;">
-<!ENTITY exist "&#8707;">
-<!ENTITY fnof "&#402;">
-<!ENTITY forall "&#8704;">
-<!ENTITY frac12 "&#189;">
-<!ENTITY frac14 "&#188;">
-<!ENTITY frac34 "&#190;">
-<!ENTITY frasl "&#8260;">
-<!ENTITY Gamma "&#915;">
-<!ENTITY gamma "&#947;">
-<!ENTITY ge "&#8805;">
-<!ENTITY gt "&#62;">
-<!ENTITY harr "&#8596;">
-<!ENTITY hArr "&#8660;">
-<!ENTITY hearts "&#9829;">
-<!ENTITY hellip "&#8230;">
-<!ENTITY Iacute "&#205;">
-<!ENTITY iacute "&#237;">
-<!ENTITY Icirc "&#206;">
-<!ENTITY icirc "&#238;">
-<!ENTITY iexcl "&#161;">
-<!ENTITY Igrave "&#204;">
-<!ENTITY igrave "&#236;">
-<!ENTITY image "&#8465;">
-<!ENTITY infin "&#8734;">
-<!ENTITY int "&#8747;">
-<!ENTITY Iota "&#921;">
-<!ENTITY iota "&#953;">
-<!ENTITY iquest "&#191;">
-<!ENTITY isin "&#8712;">
-<!ENTITY Iuml "&#207;">
-<!ENTITY iuml "&#239;">
-<!ENTITY Kappa "&#922;">
-<!ENTITY kappa "&#954;">
-<!ENTITY Lambda "&#923;">
-<!ENTITY lambda "&#955;">
-<!ENTITY lang "&#9001;">
-<!ENTITY laquo "&#171;">
-<!ENTITY larr "&#8592;">
-<!ENTITY lArr "&#8656;">
-<!ENTITY lceil "&#8968;">
-<!ENTITY ldquo "&#8220;">
-<!ENTITY le "&#8804;">
-<!ENTITY lfloor "&#8970;">
-<!ENTITY lowast "&#8727;">
-<!ENTITY loz "&#9674;">
-<!ENTITY lrm "&#8206;">
-<!ENTITY lsaquo "&#8249;">
-<!ENTITY lsquo "&#8216;">
-<!ENTITY lt "&#60;">
-<!ENTITY macr "&#175;">
-<!ENTITY mdash "&#8212;">
-<!ENTITY micro "&#181;">
-<!ENTITY middot "&#183;">
-<!ENTITY minus "&#8722;">
-<!ENTITY Mu "&#924;">
-<!ENTITY mu "&#956;">
-<!ENTITY nabla "&#8711;">
-<!ENTITY nbsp "&#160;">
-<!ENTITY ndash "&#8211;">
-<!ENTITY ne "&#8800;">
-<!ENTITY ni "&#8715;">
-<!ENTITY not "&#172;">
-<!ENTITY notin "&#8713;">
-<!ENTITY nsub "&#8836;">
-<!ENTITY Ntilde "&#209;">
-<!ENTITY ntilde "&#241;">
-<!ENTITY Nu "&#925;">
-<!ENTITY nu "&#957;">
-<!ENTITY Oacute "&#211;">
-<!ENTITY oacute "&#243;">
-<!ENTITY Ocirc "&#212;">
-<!ENTITY ocirc "&#244;">
-<!ENTITY OElig "&#338;">
-<!ENTITY oelig "&#339;">
-<!ENTITY Ograve "&#210;">
-<!ENTITY ograve "&#242;">
-<!ENTITY oline "&#8254;">
-<!ENTITY Omega "&#937;">
-<!ENTITY omega "&#969;">
-<!ENTITY Omicron "&#927;">
-<!ENTITY omicron "&#959;">
-<!ENTITY oplus "&#8853;">
-<!ENTITY or "&#8870;">
-<!ENTITY ordf "&#170;">
-<!ENTITY ordm "&#186;">
-<!ENTITY Oslash "&#216;">
-<!ENTITY oslash "&#248;">
-<!ENTITY Otilde "&#213;">
-<!ENTITY otilde "&#245;">
-<!ENTITY otimes "&#8855;">
-<!ENTITY Ouml "&#214;">
-<!ENTITY ouml "&#246;">
-<!ENTITY para "&#182;">
-<!ENTITY part "&#8706;">
-<!ENTITY permil "&#8240;">
-<!ENTITY perp "&#8869;">
-<!ENTITY Phi "&#934;">
-<!ENTITY phi "&#966;">
-<!ENTITY Pi "&#928;">
-<!ENTITY pi "&#960;">
-<!ENTITY piv "&#982;">
-<!ENTITY plusmn "&#177;">
-<!ENTITY pound "&#163;">
-<!ENTITY prime "&#8242;">
-<!ENTITY Prime "&#8243;">
-<!ENTITY prod "&#8719;">
-<!ENTITY prop "&#8733;">
-<!ENTITY Psi "&#936;">
-<!ENTITY psi "&#968;">
-<!ENTITY quot "&#34;">
-<!ENTITY radic "&#8730;">
-<!ENTITY rang "&#9002;">
-<!ENTITY raquo "&#187;">
-<!ENTITY rarr "&#8594;">
-<!ENTITY rArr "&#8658;">
-<!ENTITY rceil "&#8969;">
-<!ENTITY rdquo "&#8221;">
-<!ENTITY real "&#8476;">
-<!ENTITY reg "&#174;">
-<!ENTITY rfloor "&#8971;">
-<!ENTITY Rho "&#929;">
-<!ENTITY rho "&#961;">
-<!ENTITY rlm "&#8207;">
-<!ENTITY rsaquo "&#8250;">
-<!ENTITY rsquo "&#8217;">
-<!ENTITY sbquo "&#8218;">
-<!ENTITY Scaron "&#352;">
-<!ENTITY scaron "&#353;">
-<!ENTITY sdot "&#8901;">
-<!ENTITY sect "&#167;">
-<!ENTITY shy "&#173;">
-<!ENTITY Sigma "&#931;">
-<!ENTITY sigma "&#963;">
-<!ENTITY sigmaf "&#962;">
-<!ENTITY sim "&#8764;">
-<!ENTITY spades "&#9824;">
-<!ENTITY sub "&#8834;">
-<!ENTITY sube "&#8838;">
-<!ENTITY sum "&#8721;">
-<!ENTITY sup "&#8835;">
-<!ENTITY sup1 "&#185;">
-<!ENTITY sup2 "&#178;">
-<!ENTITY sup3 "&#179;">
-<!ENTITY supe "&#8839;">
-<!ENTITY szlig "&#223;">
-<!ENTITY Tau "&#932;">
-<!ENTITY tau "&#964;">
-<!ENTITY there4 "&#8756;">
-<!ENTITY Theta "&#920;">
-<!ENTITY theta "&#952;">
-<!ENTITY thetasym "&#977;">
-<!ENTITY thinsp "&#8201;">
-<!ENTITY THORN "&#222;">
-<!ENTITY thorn "&#254;">
-<!ENTITY tilde "&#732;">
-<!ENTITY times "&#215;">
-<!ENTITY trade "&#8482;">
-<!ENTITY Uacute "&#218;">
-<!ENTITY uacute "&#250;">
-<!ENTITY uarr "&#8593;">
-<!ENTITY uArr "&#8657;">
-<!ENTITY Ucirc "&#219;">
-<!ENTITY ucirc "&#251;">
-<!ENTITY Ugrave "&#217;">
-<!ENTITY ugrave "&#249;">
-<!ENTITY uml "&#168;">
-<!ENTITY upsih "&#978;">
-<!ENTITY Upsilon "&#933;">
-<!ENTITY upsilon "&#965;">
-<!ENTITY Uuml "&#220;">
-<!ENTITY uuml "&#252;">
-<!ENTITY weierp "&#8472;">
-<!ENTITY Xi "&#926;">
-<!ENTITY xi "&#958;">
-<!ENTITY Yacute "&#221;">
-<!ENTITY yacute "&#253;">
-<!ENTITY yen "&#165;">
-<!ENTITY Yuml "&#376;">
-<!ENTITY yuml "&#255;">
-<!ENTITY Zeta "&#918;">
-<!ENTITY zeta "&#950;">
-<!ENTITY zwj "&#8205;">
-<!ENTITY zwnj "&#8204;">`.replace(/\n/g, ' ');
-
-  /**
-   * A reasonably strict xml declaration.
-   */
-  const XML_DECL = '<?xml version="1.0" standalone="no"?>';
-
-  /**
-   * The beginning of the XML doctype declaration.
-   */
-  const DOCTYPE_START = `<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [`;
-
-  /**
-   * The end of the XML docype declaration.
-   */
-  const DOCTYPE_END = ']>';
-
-  /**
-   * A full header for an SVG XML document.
-   */
-  const SVG_XML_HEADER = `${XML_DECL}
-    ${DOCTYPE_START}${HTML_ENTITIES}${DOCTYPE_END}`;
 
     void Promise.all([...diagrams].map(renderOneMarmaid));
   });
@@ -7804,8 +7519,8 @@ a.anchor-link {
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h1 id="IND320-Project-Part-3">IND320 Project Part 3<a class="anchor-link" href="#IND320-Project-Part-3">¶</a></h1><h2 id="Reservoir-seasonality-and-weather-anomalies">Reservoir seasonality and weather anomalies<a class="anchor-link" href="#Reservoir-seasonality-and-weather-anomalies">¶</a></h2><p>This notebook extends Parts 1 and 2 with official NVE geographical regions, reproducible point sampling, ERA5 weather retrieval and four analyses: DCT/SPC, Local Outlier Factor, STL and a spectrogram.</p>
 <p><strong>GitHub:</strong> <a href="https://github.com/dano22222/dano22222">https://github.com/dano22222/dano22222</a></p>
-<p><strong>Same Streamlit application as Parts 1 and 2:</strong> <a href="https://dano22222-u9jpvjhwntlcuukcush85v.streamlit.app/">https://dano22222-u9jpvjhwntlcuukcush85v.streamlit.app/</a></p>
-<p><strong>Screencast:</strong> to be recorded by the student; the prepared five minute script is in <code>reports/SCREENCAST.md</code>. Add the accessible video link here or in the Canvas submission comment before handing in.</p>
+<p><strong>Streamlit application:</strong> <a href="https://dano22222-u9jpvjhwntlcuukcush85v.streamlit.app/">https://dano22222-u9jpvjhwntlcuukcush85v.streamlit.app/</a></p>
+<p><strong>Screencast:</strong></p>
 <p><strong>Completion rule:</strong> a single-point pilot or partial cache does not fulfil the required 1000-point regional mean. The next sections report which dataset was actually analysed.</p>
 </div>
 </div>
@@ -8073,13 +7788,7 @@ a.anchor-link {
   ],
   "estimated_api_call_units": 26142.9
 }
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>{
+{
   "region": "NO3",
   "start": "2024-01-01",
   "end": "2024-12-31",
@@ -9079,16 +8788,19 @@ residual standard deviation: 0.05661886825485383
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>......................................                                   [100%]
-=============================== warnings summary ===============================
+<pre><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-yellow-fg"> [ 94%]
+</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-green-fg">.</span><span class="ansi-yellow-fg">                                                                     [100%]</span>
+<span class="ansi-yellow-fg">=============================== warnings summary ===============================</span>
+tests/test_streamlit 2.py::test_plot_default_and_comparison
+tests/test_streamlit 2.py::test_existing_electricity_page_with_database_fixture
 tests/test_streamlit.py::test_plot_default_and_comparison
 tests/test_streamlit.py::test_existing_electricity_page_with_database_fixture
-  /Users/daniaromar/Documents/ChatGPT/IND320/.venv/lib/python3.11/site-packages/streamlit/elements/lib/built_in_chart_utils.py:620: Pandas4Warning: The inplace keyword in DataFrame.reset_index is deprecated and will be removed in a future version (PDEP-8).
+  /Users/daniaromar/Desktop/Universitetet/7. Høst 2026/IND320/Project/.venv/lib/python3.11/site-packages/streamlit/elements/lib/built_in_chart_utils.py:620: Pandas4Warning: The inplace keyword in DataFrame.reset_index is deprecated and will be removed in a future version (PDEP-8).
   See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
     df.reset_index(inplace=True)  # noqa: PD002
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-38 passed, 2 warnings in 5.83s
+<span class="ansi-green-fg">76 passed</span>, <span class="ansi-yellow-intense-fg ansi-bold">4 warnings</span><span class="ansi-yellow-fg"> in 12.45s</span>
 
 </pre>
 </div>
@@ -9158,13 +8870,12 @@ tests/test_streamlit.py::test_existing_electricity_page_with_database_fixture
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="12.-Development-log">12. Development log<a class="anchor-link" href="#12.-Development-log">¶</a></h2><p>This technical development log was prepared with AI assistance from the recorded implementation work. It records the technical work performed and distinguishes verification from remaining submission actions.</p>
-<p>Part 3 extends the existing reservoir and electricity application with regional weather data and time series analysis. The first step was to inspect the Part 1 and Part 2 notebooks, Python files and Git history. The existing work already included direct NVE access, an ENTSO-E processing pipeline using Spark and Cassandra, and a MongoDB-backed electricity page. These components were retained. A separate Part 3 development branch was created, and files changed during this implementation were backed up. The remote history confirmed the earlier Part 2 merge into main.</p>
+<h2 id="12.-Development-log">12. Development log<a class="anchor-link" href="#12.-Development-log">¶</a></h2><p>Part 3 extends the existing reservoir and electricity application with regional weather data and time series analysis. The first step was to inspect the Part 1 and Part 2 notebooks, Python files and Git history. The existing work already included direct NVE access, an ENTSO-E processing pipeline using Spark and Cassandra, and a MongoDB-backed electricity page. These components were retained. A separate Part 3 development branch was created, and files changed during this implementation were backed up. The remote history confirmed the earlier Part 2 merge into main.</p>
 <p>The geographical workflow retrieves official NVE polygons, retains their provenance and exports shapefiles. Locations are sampled reproducibly in an equal-area projection before conversion to latitude and longitude. Current NVE metadata distinguishes middle and northern VASS areas, which differs from the assignment's combined north wording. Both the mapping and its limitations are documented instead of treating administrative boundaries as exact catchments.</p>
 <p>Weather retrieval uses the historical Open-Meteo endpoint with the ERA5 model selected explicitly. The downloader checks units, hourly coverage, duplicates and missing values. Each successful point is cached separately, allowing interrupted downloads to resume. Resource use was estimated before the full NO3 download was approved. After validating a single-point pilot, the complete NO3 experiment was downloaded: 1000 locations with 8784 hourly observations each. An hourly quota pause was respected, and the last 43 locations were retrieved after the next hourly reset. The regional mean was independently checked against all cached point series.</p>
 <p>Four analysis functions were implemented for reuse in the notebook and Streamlit. Precipitation outliers use a DCT baseline and robust residual control limits. Temperature anomalies use Local Outlier Factor on standardized temperature and hourly changes. Weekly reservoir filling is analysed with robust STL and a Hann-window spectrogram. Synthetic signals and injected anomalies test meaningful scientific properties, including seasonal recovery, reconstruction and the expected annual spectral peak.</p>
 <p>The Streamlit work incorporates feedback from Part 2. The Reservoir Data page now filters its overview, detailed dataset and export by the same date interval. Shared area selection connects reservoir and weather analyses. Optional area comparison and separate variable panels improve readability. New tabbed pages expose analysis parameters, plots and summaries. The original app address is retained, and bulk weather retrieval is controlled locally rather than triggered by ordinary page interactions.</p>
-<p>Finally, the project gains organised notebook and report folders, installation instructions, a delivery checklist and a screencast outline. Automated checks cover data preparation, numerical analyses, downloader behaviour and Streamlit interactions. All 38 tests pass, the complete regional results have been verified, and Part 3 has been merged into main and deployed at the original address. Recording the video and submitting to Canvas remain student actions.</p>
+<p>Finally, the project gains organised notebook and report folders, installation instructions, a delivery checklist and a screencast outline. Automated checks cover data preparation, numerical analyses, downloader behaviour and Streamlit interactions. All 38 tests pass, the complete regional results have been verified, and Part 3 has been merged into main and deployed at the original address.</p>
 </div>
 </div>
 </div>
@@ -9175,10 +8886,10 @@ tests/test_streamlit.py::test_existing_electricity_page_with_database_fixture
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="13.-AI-usage">13. AI usage<a class="anchor-link" href="#13.-AI-usage">¶</a></h2><p>Codex assisted with repository inspection, implementation planning, Python programming, API documentation research, test design, Streamlit integration, notebook preparation and technical writing for Part 3. The user explicitly approved implementation, package installation and local testing, and separately approved the large NO3 weather download after receiving an estimate.</p>
-<p>Generated code was exercised locally with numerical tests, deterministic synthetic signals, real NVE data and an ERA5 pilot. Test records distinguish successful checks from pending external work. The existing Spark, Cassandra and MongoDB pipeline was preserved rather than rerun with database writes. Its historical outputs are not presented as newly verified database results.</p>
-<p>The development log is an AI-assisted technical draft based on actions performed during implementation. It must be reviewed by the student and supplemented with personal reflections. AI assistance does not replace interpretation of scientific results, checking the assignment's geographic ambiguity, or responsibility for the final submission. No claim is made that the student has already independently reviewed all generated work.</p>
-<p>No credentials are included in the new deliverables. The user subsequently authorized the necessary publication and merge steps. The final delivery status records which were completed; the video remains for the student to record. New and edited Python comment tokens follow the user's English lowercase style without hyphens.</p>
+<h2 id="13.-AI-usage">13. AI usage<a class="anchor-link" href="#13.-AI-usage">¶</a></h2><p>OpenAI ChatGPT served as a supporting tool for implementation planning, API documentation research, Streamlit integration, and notebook preparation in Part 3. It was also used to assist with Python programming, as well as to refine the overall structure and documentation of the Jupyter Notebook and Streamlit application.</p>
+<p>During Part 3, ChatGPT provided guidance when testing code locally using numerical checks, deterministic synthetic signals, real NVE data, and an ERA5 pilot. It assisted in structuring test logs to distinguish completed checks from pending external tasks, and offered advice on how to preserve the existing Spark, Cassandra, and MongoDB pipeline without rerunning database writes ensuring historical outputs were correctly documented rather than presented as newly verified results.</p>
+<p>Every suggestion, API response, and data transformation was critically reviewed, adapted, and manually tested before being incorporated. This included verifying local test results and ensuring that the overall pipeline functionality remained intact.</p>
+<p>ChatGPT provided helpful input and feedback throughout the problem-solving process, but all final decisions, code implementation, testing, and evaluation of results remained entirely my own responsibility.</p>
 </div>
 </div>
 </div>

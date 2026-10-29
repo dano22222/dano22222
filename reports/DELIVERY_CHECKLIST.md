@@ -15,7 +15,7 @@
 - [x] Install a separate Python 3.11 environment; preserve ind320.env.
 - [x] Pass all 38 tests in both the development folder and original project folder.
 - [x] Execute all 12 notebook code cells on the complete regional dataset.
-- [x] Export and visually inspect the 13-page PDF, including code and outputs.
+- [x] Export and visually inspect the 22-page PDF, including code and outputs.
 - [x] Organise notebooks and reports while retaining historical root files.
 - [x] Prepare README.md, AI documentation, a 472-word development log and a five minute script.
 - [x] Keep the original Streamlit URL; configure its runtime to match Python 3.11.
