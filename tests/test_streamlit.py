@@ -37,11 +37,31 @@ def test_seasonality_tabs():
     app=run_page('5_Seasonality.py')
     assert len(app.tabs)==2
 
-def test_weather_missing_then_pilot():
-    app=run_page('6_Weather.py')
-    assert not app.exception
-    with patch('nve_api.load_reservoir_data',return_value=reservoir_fixture()):
-        app.radio(key='weather_mode').set_value('Single-point pilot (not regional mean)').run()
+def fake_sample(region,start,end,n_points=5,**kwargs):
+    #synthetic hourly weather instead of a network request
+    import numpy as np
+    from src.weather import VARIABLES,expected_hours
+    index=expected_hours(start,end);rng=np.random.default_rng(len(region))
+    df=pd.DataFrame({v:rng.gamma(1.,1.,len(index)) for v in VARIABLES},index=index)
+    df['temperature_2m']=rng.normal(5,8,len(index))
+    return df,{'region':region,'points':n_points,'locations':[{'point_id':0,'latitude':63.,'longitude':10.}]}
+
+def test_weather_follows_area_selector_and_downloads_live():
+    with patch('src.weather.download_sample',side_effect=fake_sample) as download:
+        app=run_page('6_Weather.py')
+        assert len(app.tabs)==2
+        assert download.call_args.args[:2]==('NO3','2024-01-01')
+        #changing the shared selector to vass 3 downloads the northern region instead
+        with patch('nve_api.load_reservoir_data',return_value=reservoir_fixture()):
+            app.radio(key='shared_type').set_value('VASS').run()
+            app.selectbox(key='shared_area').set_value(3).run()
+        assert not app.exception and download.call_args.args[0]=='VASS3'
+
+def test_weather_complete_mean_option():
+    with patch('src.weather.download_sample',side_effect=fake_sample):
+        app=run_page('6_Weather.py')
+        with patch('nve_api.load_reservoir_data',return_value=reservoir_fixture()):
+            app.checkbox[0].check().run()
     assert not app.exception and len(app.tabs)==2
 
 def test_home():

@@ -7,4 +7,3 @@
 *.shx binary
 *.dbf binary
 *.mov binary
-backups/** -whitespace

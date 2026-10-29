@@ -1,111 +1,58 @@
 # IND320: Norwegian reservoirs, electricity and weather
 
-An interactive analysis project connecting Norwegian reservoir statistics, cross-border electricity flows and historical weather. The same Streamlit application is used throughout all project parts.
+An interactive analysis project connecting Norwegian reservoir statistics (NVE), cross-border electricity flows (ENTSO-E) and historical weather (Open-Meteo ERA5). The same Streamlit application is used throughout all project parts.
 
 - **Application:** https://dano22222-u9jpvjhwntlcuukcush85v.streamlit.app/
 - **Repository:** https://github.com/dano22222/dano22222
-- **Development:** `part3-development`; merge into `main` with visible merge history before submission.
+- **Branches:** each part is developed in its own branch (`part2-development`, `part3-development`) and merged into `main` after the previous peer review and feedback.
 
 ## Project parts
 
 | Part | Scope |
 |---|---|
-| 1 | Explore reservoir CSV data with Pandas and Matplotlib; document the analysis in Jupyter; introduce Streamlit tables and plots. |
-| 2 | Access NVE and ENTSO-E APIs; process electricity flows with Spark; store them in Cassandra and MongoDB Atlas; extend Streamlit. |
-| 3 | Sample NVE regions, retrieve hourly ERA5 weather and analyse precipitation with DCT/SPC, temperature with LOF, and reservoir filling with STL and a spectrogram. |
+| 1 | Explore reservoir data with Pandas and Matplotlib; first Streamlit tables and plots. |
+| 2 | NVE and ENTSO-E APIs; Spark, Cassandra and MongoDB Atlas; electricity page in Streamlit. |
+| 3 | NVE regions and 1000 random locations per region; hourly ERA5 weather; precipitation outliers (DCT/SPC), temperature anomalies (LOF), STL and spectrogram of reservoir filling. |
 
 ## Structure
 
 ```text
-app.py                         existing deployment entry point
-nve_api.py                     existing cached NVE loader
-pages/                         original and new Streamlit pages
-src/                           reusable analysis, geography, weather and UI code
-scripts/                       data preparation, approved download and notebook export
-tests/                         scientific, downloader and Streamlit checks
-notebooks/                     Part 1 and Part 2 copies; Part 3 working notebook
-reports/                       logs, figures, exports, video script and archived PDFs
-data/regions/                  official polygons, shapefiles and fixed sample points
-data/reservoir.parquet         reproducible NVE snapshot
-data/weather/                  completed weather means and local point cache
-backups/                       preserved files from before Part 3 changes
-requirements.txt               app dependencies
-requirements-dev.txt           testing and notebook dependencies
+app.py              streamlit entry point and page navigation
+nve_api.py          cached download of nve reservoir data for the app
+pages/              streamlit pages
+src/                shared code: analysis, geography, weather download, reservoir helpers, ui
+scripts/            prepare_data.py (polygons, points, reservoir snapshot), download_weather.py (full download)
+tests/              pytest tests for analyses, downloads, geography and streamlit pages
+notebooks/          jupyter notebooks for parts 1, 2 and 3
+reports/            pdf exports of the hand-ins
+data/regions/       nve polygons (geojson and shapefiles) and the sampled locations
+data/reservoir.parquet          nve snapshot used by the notebook
+data/weather/                   1000 point regional mean for NO3 2024 (the point cache is not in git)
+requirements.txt    app dependencies (pinned); requirements-dev.txt adds testing and notebook tools
 ```
 
-Historical root notebooks, PDFs and videos are preserved under `archive/cleanup_2026_10_29/previous_root_deliverables/`. Use `notebooks/` for the working notebooks and `reports/part1/` and `reports/part2/` for historical PDFs. Numbered copies are retained under `archive/cleanup_2026_10_29/numbered_copies/`, with a complete move manifest; nothing was deleted. Existing README screencast information is retained in `backups/part2_before_part3/README.MD`. Use the existing Part 2 video link in its notebook for that submission.
-
-## Installation
-
-Use Python 3.11 from the project directory. The local tests use 3.11, and the existing Streamlit Cloud runtime is configured to match:
+## Installation and running
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-dev.txt
-```
-
-Runtime dependencies are pinned to the versions tested locally, including Streamlit, Starlette and Uvicorn. `requirements-lock.txt` additionally records the complete development environment.
-
-For the existing electricity page, provide `MONGODB_URI` in a local `.env` or Streamlit Cloud secrets. The notebook for Part 2 additionally requires its existing ENTSO-E token, Spark, Java and a running Cassandra instance. These services are not required to run the new Part 3 numerical tests. Never commit `.env`, tokens or secrets.
-
-## Run Streamlit
-
-```bash
 python -m streamlit run app.py
-```
-
-The navigation groups reservoir data, plotting and seasonality together, followed by weather and electricity. Reservoir and weather pages share an area selection. Reservoir Data filters both its overview and detailed records by an inclusive date interval, with matching CSV export. Existing area comparison remains available on Reservoir Plots.
-
-## Prepare Part 3 data
-
-Official NVE geography and reservoir inputs are included. To deliberately refresh them:
-
-```bash
-python scripts/prepare_data.py
-```
-
-This exports source polygons as GeoJSON and shapefiles and samples 1000 points per region in an equal-area projection. The weather function accepts region and date interval and looks up these fixed coordinates. See `reports/ASSUMPTIONS.md` for the important distinction between administrative region proxies and true catchments, and the current VASS3/VASS4 metadata discrepancy.
-
-Estimate before downloading:
-
-```bash
-python scripts/download_weather.py --region NO3 --estimate
-python scripts/download_weather.py --region NO3 --pilot
-```
-
-The user approved the full NO3/2024 experiment after an estimate. To start or resume that approved run:
-
-```bash
-python scripts/download_weather.py --region NO3 --approved
-```
-
-The pointwise implementation requests 1000 point-years (8,784,000 point-hours). Requests are cached; HTTP 429 stops the run without discarding data. Long date intervals count as multiple API units; the estimate is conservative. After an hourly limit, `python scripts/resume_weather.py --approved --wait-next-hour` waits for the next hourly window and continues from the cache. A completed 1000-point mean has a `_mean.parquet` suffix and provenance JSON. The `_pilot_1.parquet` file is a single point and is never silently treated as a regional average. Read the latest download log and status report before claiming completion. No paid subscription is required or enabled.
-
-The app uses complete local means and offers an explicit single-point API request. Large downloads do not start during ordinary Streamlit page reruns. Completed small regional means should be included in Git; bulk point caches are ignored.
-
-## Analysis and verification
-
-```bash
 python -m pytest -q
-python scripts/build_notebook.py
-python scripts/execute_notebook.py
 ```
 
-Tests check deterministic geographic sampling and containment, leap-year coverage, downloader approval/cache/rate-limit behaviour, known seasonal signals, injected outliers, STL reconstruction, an annual spectrogram peak, invalid input and Streamlit controls. The full local consistency check recomputes the mean from all 1000 raw caches. These bulk caches are excluded from Git: a fresh clone validates the distributed mean and provenance, and skips only the raw-cache consistency check until the cache is regenerated. The electricity page is preserved; fixture-based page tests do not verify deployed MongoDB credentials.
+The electricity page needs `MONGODB_URI` in a local `.env` file or in the Streamlit Cloud secrets. Never commit `.env`, tokens or secrets.
 
-Open `notebooks/IND320_Project(P3).ipynb`. The notebook uses the complete regional mean when present, otherwise clearly labels a pilot and marks the regional analysis incomplete. Run it after the full download before exporting. `scripts/execute_notebook.py` creates an executed notebook and HTML with code, messages, tables and plots; run `python scripts/export_pdf.py` to generate the PDF, then visually inspect it. The PDF export includes every code cell and saved output.
+## Part 3 data
 
-Defaults: SPC cutoff 30 days and 3 robust sigmas; LOF 1% and 48 neighbours; STL annual period 52 weeks, seasonal smoother 13, trend smoother 105, robust fitting; spectrogram window 156 weeks and overlap 130. All parameters are explained in the notebook and app. Statistical flags describe unusual observations, not proven errors or causes.
+- `python scripts/prepare_data.py` downloads the NVE electricity areas and NVE regions, builds the reservoir areas (NO1–NO5, VASS1 = RS+RØ, VASS2 = RV, VASS3 = RM+RN, Norway) and samples 1000 locations per region with a fixed seed. `--saved` rebuilds from the saved polygons.
+- `python scripts/download_weather.py --estimate` prints the size and API quota estimate; `--region NO3 --approved` runs (or resumes) the full 1000 point download. A full year costs about 26 Open-Meteo call units per location (free limit 10 000 per day), so the download stops at the quota and continues from the cache the next time.
+- The Streamlit weather page downloads a small sample (default 5 locations) for the selected area directly from Open-Meteo and caches it.
 
-## Feedback and submission
-
-The detailed response is in `reports/FEEDBACK_RESPONSE.md`. Part 2 feedback is incorporated through the date interval, clearer graphs, shared filtering, organised notebook/report folders and this README. AI usage and the technical log are in `reports/`. Review the log and add personal reflections. Follow `reports/DELIVERY_CHECKLIST.md` and the five minute script in `reports/SCREENCAST.md`.
-
-Keep the existing app URL. The remote history was checked and contains the Part 2 merge commit `8dbf70b`. Part 3 must likewise have a visible merge from its development branch into main. The user subsequently authorized completion, including the necessary publication steps; delivery status records what was actually performed. Record the screencast personally and insert its accessible link into the notebook or Canvas comment.
+Default parameters: SPC cutoff 30 days and 3 robust standard deviations; LOF 1% and 48 neighbours; STL period 52 weeks, seasonal smoother 13, trend smoother 105, robust; spectrogram window 156 weeks and overlap 130.
 
 ## Data attribution
 
-- [NVE reservoir statistics](https://www.nve.no/energi/analyser-og-statistikk/om-magasinstatistikken/) and official NVE ArcGIS regional polygons; see recorded source URLs in `data/regions/provenance.json`.
-- [Open-Meteo Historical Weather API](https://open-meteo.com/en/docs/historical-weather-api), ERA5 / Copernicus reanalysis; weather data CC BY 4.0. Spatial sampling, averages and analyses are transformations performed in this project.
-- [ENTSO-E Transparency Platform](https://transparency.entsoe.eu/), Part 2 cross-border electricity data.
+- [NVE reservoir statistics](https://www.nve.no/energi/analyser-og-statistikk/om-magasinstatistikken/) and NVE map layers (see `data/regions/provenance.json`).
+- [Open-Meteo Historical Weather API](https://open-meteo.com/en/docs/historical-weather-api), ERA5 / Copernicus, CC BY 4.0.
+- [ENTSO-E Transparency Platform](https://transparency.entsoe.eu/), cross-border electricity data (Part 2).

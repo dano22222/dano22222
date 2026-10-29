@@ -1,24 +1,21 @@
+#secrets
 .env
 .env.*
+.streamlit/secrets.toml
+
+#local environments and caches
 ind320.env/
+.venv/
 __pycache__/
 *.pyc
-.streamlit/secrets.toml
-.venv/
 .pytest_cache/
-data/weather/*/point_*.parquet
-data/weather/*/point_*.json
-reports/weather_download.log
+.ipynb_checkpoints/
+.vscode/
 .DS_Store
+
+#large weather point cache (about 95 mb); only the regional mean is committed
+data/weather/*/
+
+#screencasts are shared as links
 *.mov
-reports/pdf_preview/
-reports/app_screenshots/
-
-**/pdf_preview/
-**/app_screenshots/
-reports/environment_install.txt
-reports/pdf_dependencies.txt
-
-.venv-compat/
-
-archive/cleanup_2026_10_29/numbered_copies/
+*.mp4
