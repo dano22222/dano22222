@@ -11,7 +11,7 @@ def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 def sync():
     #preserve every modified destination file once before applying our updates
     roots=['src','scripts','tests','pages','data','notebooks','reports','backups']
-    files=[SOURCE/name for name in ['app.py','requirements.txt','requirements-dev.txt','README.md','.gitignore','pytest.ini'] if (SOURCE/name).exists()]
+    files=[SOURCE/name for name in ['app.py','requirements.txt','requirements-dev.txt','requirements-lock.txt','README.md','.gitignore','pytest.ini'] if (SOURCE/name).exists()]
     for name in roots:
         files.extend(p for p in (SOURCE/name).rglob('*') if p.is_file() and '__pycache__' not in p.parts and not p.name.endswith('.tmp'))
     manifest=DEST/'backups/part3_sync_manifest.json'

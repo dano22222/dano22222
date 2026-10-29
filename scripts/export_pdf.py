@@ -11,8 +11,12 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 ROOT=Path(__file__).resolve().parents[1]
 FONT=Path('/System/Library/Fonts/Supplemental')
+if not FONT.exists():
+    import reportlab
+    FONT=Path(reportlab.__file__).parent/'fonts'
 for name,file in [('Body','Arial.ttf'),('BodyBold','Arial Bold.ttf'),('Mono','Courier New.ttf')]:
-    pdfmetrics.registerFont(TTFont(name,str(FONT/file)))
+    fallback={'Body':'Vera.ttf','BodyBold':'VeraBd.ttf','Mono':'Vera.ttf'}
+    pdfmetrics.registerFont(TTFont(name,str(FONT/file if (FONT/file).exists() else FONT/fallback[name])))
 pdfmetrics.registerFontFamily('Body',normal='Body',bold='BodyBold',italic='Body',boldItalic='BodyBold')
 styles=getSampleStyleSheet()
 styles.add(ParagraphStyle('Text',fontName='Body',fontSize=9.5,leading=14,spaceAfter=8))

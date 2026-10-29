@@ -78,7 +78,7 @@ The user approved the full NO3/2024 experiment after an estimate. To start or re
 python scripts/download_weather.py --region NO3 --approved
 ```
 
-The original pointwise implementation requests 1000 point-years (8,784,000 point-hours). Requests are cached; HTTP 429 stops the run without discarding data. Long date intervals count as multiple API units. A completed 1000-point mean has a `_mean.parquet` suffix and provenance JSON. The `_pilot_1.parquet` file is a single point and is never silently treated as a regional average. Read the latest download log and status report before claiming completion. No paid subscription is required or enabled.
+The pointwise implementation requests 1000 point-years (8,784,000 point-hours). Requests are cached; HTTP 429 stops the run without discarding data. Long date intervals count as multiple API units. A completed 1000-point mean has a `_mean.parquet` suffix and provenance JSON. The `_pilot_1.parquet` file is a single point and is never silently treated as a regional average. Read the latest download log and status report before claiming completion. No paid subscription is required or enabled.
 
 The app uses complete local means and offers an explicit single-point API request. Large downloads do not start during ordinary Streamlit page reruns. Completed small regional means should be included in Git; bulk point caches are ignored.
 
@@ -92,7 +92,7 @@ python scripts/execute_notebook.py
 
 Tests check deterministic geographic sampling and containment, leap-year coverage, downloader approval/cache/rate-limit behaviour, known seasonal signals, injected outliers, STL reconstruction, an annual spectrogram peak, invalid input and Streamlit controls. The electricity page is preserved; local fixture-based page tests do not verify deployed MongoDB credentials.
 
-Open `notebooks/IND320_Project(P3).ipynb`. The notebook uses the complete regional mean when present, otherwise clearly labels a pilot and marks the regional analysis incomplete. Run it after the full download before exporting. `scripts/execute_notebook.py` creates an executed notebook and HTML with code, messages, tables and plots; print the HTML to PDF after reviewing every page, or use Jupyter's PDF export.
+Open `notebooks/IND320_Project(P3).ipynb`. The notebook uses the complete regional mean when present, otherwise clearly labels a pilot and marks the regional analysis incomplete. Run it after the full download before exporting. `scripts/execute_notebook.py` creates an executed notebook and HTML with code, messages, tables and plots; run `python scripts/export_pdf.py` to generate the PDF, then visually inspect it. The PDF export includes every code cell and saved output.
 
 Defaults: SPC cutoff 30 days and 3 robust sigmas; LOF 1% and 48 neighbours; STL annual period 52 weeks, seasonal smoother 13, trend smoother 105, robust fitting; spectrogram window 156 weeks and overlap 130. All parameters are explained in the notebook and app. Statistical flags describe unusual observations, not proven errors or causes.
 
