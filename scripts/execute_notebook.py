@@ -1,4 +1,4 @@
-"""Execute the saved Part 3 notebook and export all code, outputs and figures."""
+"""execute the saved part 3 notebook and export all code, outputs and figures."""
 from pathlib import Path
 import nbformat
 from nbclient import NotebookClient

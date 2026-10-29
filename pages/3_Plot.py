@@ -90,6 +90,15 @@ numeric_columns = [
     "change_in_fill_level"
 ]
 
+#use explicit units so variables remain interpretable in separate panels
+axis_labels = {
+    "fill_level": "Filling fraction",
+    "capacity_TWh": "Capacity (TWh)",
+    "stored_energy_TWh": "Stored energy (TWh)",
+    "fill_level_previous_week": "Previous filling fraction",
+    "change_in_fill_level": "Change in filling fraction"
+}
+
 selected_column = st.selectbox(
     "Choose column",
     numeric_columns + ["All"]
@@ -136,7 +145,7 @@ else:
                 for area in plot_df.columns
             ]
 
-            st.line_chart(plot_df, height=320)
+            st.line_chart(plot_df, height=320, x_label="Date", y_label=axis_labels[column])
 
         else:
             #showing the selected area's development over time
@@ -144,7 +153,9 @@ else:
                 filtered_df,
                 x="date",
                 y=column,
-                height=320
+                height=320,
+                x_label="Date",
+                y_label=axis_labels[column]
             )
 
     st.caption(

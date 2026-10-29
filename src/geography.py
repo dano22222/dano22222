@@ -1,4 +1,4 @@
-"""Official NVE polygons, reproducible equal-area rejection sampling."""
+"""official nve polygons, reproducible equal area rejection sampling."""
 from pathlib import Path
 import json
 import numpy as np
@@ -19,7 +19,7 @@ def query_polygons(url):
     return gpd.GeoDataFrame.from_features(obj['features'],crs=4326)
 
 def sample_polygon(geometry, count=1000, seed=320, original_wgs84=None):
-    """Uniform area in EPSG:3035 (equal-area), then convert to lon/lat."""
+    """uniform area in epsg:3035 (equal area), then convert to lon/lat."""
     if count<1 or geometry.is_empty:raise ValueError('Nonempty polygon and positive count required.')
     rng=np.random.default_rng(seed);xmin,ymin,xmax,ymax=geometry.bounds
     points=[]

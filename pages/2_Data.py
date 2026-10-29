@@ -28,6 +28,8 @@ if type_df.empty:
     st.info("No observations in this date interval.")
     st.stop()
 
+st.caption("This date interval applies to the overview, detailed data and export. Analysis pages use their own time periods.")
+
 #then selecting the relevant numerical columns
 numeric_columns = [
     "fill_level",

@@ -1,4 +1,4 @@
-"""Shared persistent area selection for the reservoir and Part 3 pages."""
+"""shared persistent area selection for the reservoir and part 3 pages."""
 import streamlit as st
 
 def area_selector(df):
@@ -12,3 +12,11 @@ def area_selector(df):
     st.session_state['reservoir_selection']=(kind,int(area))
     st.sidebar.caption('This area is shared by reservoir and weather analyses.')
     return kind,area
+
+
+def analysis_summary(summary):
+    """show outlier counts and proportions with readable labels"""
+    observations,flagged,share=st.columns(3)
+    observations.metric('Hourly observations',f"{summary['observations']:,}")
+    flagged.metric('Flagged hours',f"{summary['outliers']:,}")
+    share.metric('Flagged share',f"{summary['fraction']:.1%}")

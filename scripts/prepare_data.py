@@ -1,4 +1,4 @@
-"""Download small official region and reservoir inputs; no weather download."""
+"""download small official region and reservoir inputs; no weather download."""
 import sys
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))

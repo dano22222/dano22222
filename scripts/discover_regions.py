@@ -1,4 +1,4 @@
-"""List official NVE layers likely to contain regional statistical boundaries."""
+"""list official nve layers likely to contain regional statistical boundaries."""
 import requests
 from concurrent.futures import ThreadPoolExecutor
 base='https://gis3.nve.no/map/rest/services/'

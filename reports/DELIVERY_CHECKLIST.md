@@ -1,26 +1,31 @@
 # Submission checklist
 
-- [x] Inspect Part 1 and Part 2 and preserve historical originals.
-- [x] Create part3-development without discarding local changes.
-- [x] Verify GitHub main contains the Part 2 merge (8dbf70b).
-- [x] Implement geographic preparation, point sampling, resumable weather retrieval and all four analyses.
-- [x] Add the Reservoir Data date interval requested by Abdirahman.
-- [x] Improve plot readability as requested by Yue Yang.
-- [x] Group Streamlit pages and share reservoir/weather area selection.
-- [x] Preserve NVE API access, electricity page, MongoDB secrets handling and downloads.
-- [x] Add notebooks/ and reports/ without moving or deleting historical originals.
-- [x] Prepare README, AI usage, technical development log and video outline.
-- [ ] Finish all 1000 NO3/2024 point downloads and validate the final spatial mean.
-- [ ] Rerun the notebook on the complete regional dataset and review its interpretations.
-- [ ] Independently review the geographic proxy against course guidance.
-- [ ] Student reviews the 300–500 word development log and adds personal reflection.
-- [ ] Export the completed, executed notebook to PDF and inspect every page.
-- [ ] Record the five minute video and insert an accessible link into the notebook or submission comment.
-- [ ] With explicit approval: commit and push part3-development, then merge into main with a merge commit before the deadline, after required feedback. Do not squash if the assessment needs visible merge history.
-- [ ] With explicit approval: update the existing Streamlit deployment using the same URL, repository and app.py entry point. Never create a separate Part 3 app address.
-- [ ] Verify the actual deployed app against NVE and MongoDB; local fixture tests do not establish cloud connectivity.
-- [ ] Submit one PDF in Canvas; add a submission comment if updating an earlier submission.
+- [x] Inspect Part 1 and Part 2; preserve historical originals and initial local edits.
+- [x] Develop on part3-development and verify the existing Part 2 merge 8dbf70b.
+- [x] Retrieve official NVE polygons, export shapefiles and sample 1000 locations per region.
+- [x] Document the administrative boundary proxy and current VASS metadata discrepancy.
+- [x] Complete all 1000 NO3/2024 weather series: 8784 hours per location.
+- [x] Recompute and verify the delivered spatial mean from all cached point series.
+- [x] Implement DCT/SPC, LOF, STL and a spectrogram with configurable parameters.
+- [x] Add the requested Reservoir Data date filter and matching export.
+- [x] Improve plot readability and retain optional area comparison.
+- [x] Add tabbed analyses, shared area selection and clear statistics to Streamlit.
+- [x] Preserve NVE API access, electricity analysis and secure MongoDB access.
+- [x] Verify real MongoDB access without writes; confirm 114528 existing records.
+- [x] Install a separate Python 3.11 environment; preserve ind320.env.
+- [x] Pass all 38 tests in both the development folder and original project folder.
+- [x] Execute all 12 notebook code cells on the complete regional dataset.
+- [x] Export and visually inspect the 13-page PDF, including code and outputs.
+- [x] Organise notebooks and reports while retaining historical root files.
+- [x] Prepare README.md, AI documentation, a 457-word development log and a five minute script.
+- [x] Keep the original Streamlit URL; configure its runtime to match Python 3.11.
+- [ ] Complete the Part 3 merge into main and verify remote publication.
+- [ ] Verify the updated public app and its weather/reservoir/electricity pages.
+- [ ] Student records the five minute video and supplies an accessible link.
+- [ ] Student uploads the PDF to Canvas and adds the video link in the submission comment.
 
-Existing app: https://dano22222-u9jpvjhwntlcuukcush85v.streamlit.app/
+The last two steps are submission actions, not missing code. The video may be linked in Canvas so the completed PDF does not need to be regenerated after recording.
+
+Original application: https://dano22222-u9jpvjhwntlcuukcush85v.streamlit.app/
 
 Repository: https://github.com/dano22222/dano22222

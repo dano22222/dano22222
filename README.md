@@ -24,7 +24,7 @@ src/                           reusable analysis, geography, weather and UI code
 scripts/                       data preparation, approved download and notebook export
 tests/                         scientific, downloader and Streamlit checks
 notebooks/                     Part 1 and Part 2 copies; Part 3 working notebook
-reports/                       log, AI documentation, figures, exports and video script
+reports/                       logs, figures, exports, video script and archived PDFs
 data/regions/                  official polygons, shapefiles and fixed sample points
 data/reservoir.parquet         reproducible NVE snapshot
 data/weather/                  completed weather means and local point cache
@@ -33,11 +33,11 @@ requirements.txt               app dependencies
 requirements-dev.txt           testing and notebook dependencies
 ```
 
-Historical root notebooks, PDFs and videos remain where they were. Notebook copies in `notebooks/` do not replace the originals. Existing README screencast information is retained in `backups/part2_before_part3/README.MD`. Use the existing Part 2 video link in its notebook for that submission.
+Historical root notebooks, PDFs and videos remain where they were. Copies of the historical PDFs are also organised under reports/part1/ and reports/part2/. Notebook copies in `notebooks/` do not replace the originals. Existing README screencast information is retained in `backups/part2_before_part3/README.MD`. Use the existing Part 2 video link in its notebook for that submission.
 
 ## Installation
 
-Use Python 3.11 or 3.12 from the project directory:
+Use Python 3.11 from the project directory. The local tests use 3.11, and the existing Streamlit Cloud runtime is configured to match:
 
 ```bash
 python3 -m venv .venv
@@ -78,7 +78,7 @@ The user approved the full NO3/2024 experiment after an estimate. To start or re
 python scripts/download_weather.py --region NO3 --approved
 ```
 
-The pointwise implementation requests 1000 point-years (8,784,000 point-hours). Requests are cached; HTTP 429 stops the run without discarding data. Long date intervals count as multiple API units. A completed 1000-point mean has a `_mean.parquet` suffix and provenance JSON. The `_pilot_1.parquet` file is a single point and is never silently treated as a regional average. Read the latest download log and status report before claiming completion. No paid subscription is required or enabled.
+The pointwise implementation requests 1000 point-years (8,784,000 point-hours). Requests are cached; HTTP 429 stops the run without discarding data. Long date intervals count as multiple API units; the estimate is conservative. After an hourly limit, `python scripts/resume_weather.py --approved --wait-next-hour` waits for the next hourly window and continues from the cache. A completed 1000-point mean has a `_mean.parquet` suffix and provenance JSON. The `_pilot_1.parquet` file is a single point and is never silently treated as a regional average. Read the latest download log and status report before claiming completion. No paid subscription is required or enabled.
 
 The app uses complete local means and offers an explicit single-point API request. Large downloads do not start during ordinary Streamlit page reruns. Completed small regional means should be included in Git; bulk point caches are ignored.
 
@@ -90,7 +90,7 @@ python scripts/build_notebook.py
 python scripts/execute_notebook.py
 ```
 
-Tests check deterministic geographic sampling and containment, leap-year coverage, downloader approval/cache/rate-limit behaviour, known seasonal signals, injected outliers, STL reconstruction, an annual spectrogram peak, invalid input and Streamlit controls. The electricity page is preserved; local fixture-based page tests do not verify deployed MongoDB credentials.
+Tests check deterministic geographic sampling and containment, leap-year coverage, downloader approval/cache/rate-limit behaviour, known seasonal signals, injected outliers, STL reconstruction, an annual spectrogram peak, invalid input and Streamlit controls. The full local consistency check recomputes the mean from all 1000 raw caches. These bulk caches are excluded from Git: a fresh clone validates the distributed mean and provenance, and skips only the raw-cache consistency check until the cache is regenerated. The electricity page is preserved; fixture-based page tests do not verify deployed MongoDB credentials.
 
 Open `notebooks/IND320_Project(P3).ipynb`. The notebook uses the complete regional mean when present, otherwise clearly labels a pilot and marks the regional analysis incomplete. Run it after the full download before exporting. `scripts/execute_notebook.py` creates an executed notebook and HTML with code, messages, tables and plots; run `python scripts/export_pdf.py` to generate the PDF, then visually inspect it. The PDF export includes every code cell and saved output.
 
@@ -98,7 +98,7 @@ Defaults: SPC cutoff 30 days and 3 robust sigmas; LOF 1% and 48 neighbours; STL 
 
 ## Feedback and submission
 
-Part 2 feedback is incorporated through the date interval, clearer graphs, shared filtering, organised notebook/report folders and this README. AI usage and the technical log are in `reports/`. Review the log and add personal reflections. Follow `reports/DELIVERY_CHECKLIST.md` and the five minute script in `reports/SCREENCAST.md`.
+The detailed response is in `reports/FEEDBACK_RESPONSE.md`. Part 2 feedback is incorporated through the date interval, clearer graphs, shared filtering, organised notebook/report folders and this README. AI usage and the technical log are in `reports/`. Review the log and add personal reflections. Follow `reports/DELIVERY_CHECKLIST.md` and the five minute script in `reports/SCREENCAST.md`.
 
 Keep the existing app URL. The remote history was checked and contains the Part 2 merge commit `8dbf70b`. Part 3 must likewise have a visible merge from its development branch into main. The user subsequently authorized completion, including the necessary publication steps; delivery status records what was actually performed. Record the screencast personally and insert its accessible link into the notebook or Canvas comment.
 
