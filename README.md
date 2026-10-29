@@ -45,6 +45,8 @@ source .venv/bin/activate
 python -m pip install -r requirements-dev.txt
 ```
 
+Runtime dependencies are pinned to the versions tested locally, including Streamlit, Starlette and Uvicorn. `requirements-lock.txt` additionally records the complete development environment.
+
 For the existing electricity page, provide `MONGODB_URI` in a local `.env` or Streamlit Cloud secrets. The notebook for Part 2 additionally requires its existing ENTSO-E token, Spark, Java and a running Cassandra instance. These services are not required to run the new Part 3 numerical tests. Never commit `.env`, tokens or secrets.
 
 ## Run Streamlit

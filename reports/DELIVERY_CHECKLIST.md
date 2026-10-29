@@ -19,7 +19,7 @@
 - [x] Organise notebooks and reports while retaining historical root files.
 - [x] Prepare README.md, AI documentation, a 457-word development log and a five minute script.
 - [x] Keep the original Streamlit URL; configure its runtime to match Python 3.11.
-- [ ] Complete the Part 3 merge into main and verify remote publication.
+- [x] Complete the Part 3 merge into main and verify remote publication (5745961).
 - [ ] Verify the updated public app and its weather/reservoir/electricity pages.
 - [ ] Student records the five minute video and supplies an accessible link.
 - [ ] Student uploads the PDF to Canvas and adds the video link in the submission comment.
