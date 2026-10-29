@@ -1,0 +1,12 @@
+{
+  "region": "NO3",
+  "start": "2024-01-01",
+  "end": "2024-12-31",
+  "points": 1,
+  "complete_1000": false,
+  "model": "era5",
+  "timezone": "UTC",
+  "coordinates_hash": "7d8645e161d1",
+  "source": "https://archive-api.open-meteo.com/v1/archive",
+  "point_cache": "NO3_2024-01-01_2024-12-31_7d8645e161d1"
+}
