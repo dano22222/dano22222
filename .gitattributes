@@ -1,0 +1,10 @@
+*.pdf binary
+*.parquet binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.shp binary
+*.shx binary
+*.dbf binary
+*.mov binary
+backups/** -whitespace

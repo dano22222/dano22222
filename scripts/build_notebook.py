@@ -10,7 +10,8 @@ md('''# IND320 Project Part 3
 
 This notebook extends Parts 1 and 2 with official NVE geographical regions, reproducible point sampling, ERA5 weather retrieval and four analyses: DCT/SPC, Local Outlier Factor, STL and a spectrogram.
 
-**GitHub:** https://github.com/dano22222/dano22222  
+**GitHub:** https://github.com/dano22222/dano22222
+
 **Same Streamlit application as Parts 1 and 2:** https://dano22222-u9jpvjhwntlcuukcush85v.streamlit.app/
 
 **Screencast:** to be recorded by the student; the prepared five minute script is in `reports/SCREENCAST.md`. Add the accessible video link here or in the Canvas submission comment before handing in.
