@@ -1,3 +1,0 @@
-[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
-Executed cells: 12
-HTML export: /Users/daniaromar/Documents/ChatGPT/IND320/reports/IND320_Project(P3).html

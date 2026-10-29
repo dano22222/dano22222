@@ -4,9 +4,13 @@
   "end": "2024-12-31",
   "points": 1000,
   "complete_1000": true,
+  "variables": [
+    "temperature_2m",
+    "precipitation"
+  ],
   "model": "era5",
   "timezone": "UTC",
-  "coordinates_hash": "e317ed1283d1",
+  "coordinates_hash": "ee8ea47e1fc6",
   "source": "https://archive-api.open-meteo.com/v1/archive",
-  "point_cache": "NO3_2024-01-01_2024-12-31_e317ed1283d1"
+  "point_cache": "NO3_2024-01-01_2024-12-31_ee8ea47e1fc6"
 }
