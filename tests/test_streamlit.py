@@ -77,4 +77,4 @@ def test_existing_electricity_page_with_database_fixture():
     with patch.dict(os.environ,{'MONGODB_URI':'mongodb://localhost'}),patch('pymongo.MongoClient',return_value=client):
         app=AppTest.from_file(str(ROOT/'pages/4_Electricity.py'),default_timeout=60).run()
     assert not app.exception
-    assert len(app.selectbox)==1 and len(app.pills)==1
+    assert len(app.selectbox)==1 and len(getattr(app,'pills',app.get('button_group')))==1
