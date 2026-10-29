@@ -1,0 +1,665 @@
+{
+  "p3_notebook_sha256_unchanged": "cafc5ca70dbb2643cbf8e97bfce7336afda2b13be855090d326f76b5140961aa",
+  "moves": [
+    {
+      "from": "README 2.md",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/README 2.md",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "requirements 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/requirements 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "IND320_Project(P2) 2.pdf",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/IND320_Project(P2) 2.pdf",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "IND320_Project(P2) 2.ipynb",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/IND320_Project(P2) 2.ipynb",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "nve_api 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/nve_api 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "pytest 2.ini",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/pytest 2.ini",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "requirements-dev 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/requirements-dev 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "requirements-lock 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/requirements-lock 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "IND320_Project(P1) 2.pdf",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/IND320_Project(P1) 2.pdf",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": ".gitignore 2",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/.gitignore 2",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "IND320_Project(P1) 2.ipynb",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/IND320_Project(P1) 2.ipynb",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "tests/test_weather_download 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/tests/test_weather_download 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "tests/test_geography 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/tests/test_geography 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "tests/test_analysis 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/tests/test_analysis 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "tests/test_streamlit 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/tests/test_streamlit 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "tests/test_completed_data 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/tests/test_completed_data 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "tests/test_comment_style 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/tests/test_comment_style 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "scripts/prepare_data 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/scripts/prepare_data 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "scripts/export_pdf 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/scripts/export_pdf 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "scripts/download_weather 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/scripts/download_weather 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "scripts/sync_to_project 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/scripts/sync_to_project 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "scripts/discover_regions 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/scripts/discover_regions 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "scripts/audit_weather 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/scripts/audit_weather 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "scripts/build_notebook 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/scripts/build_notebook 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "scripts/execute_notebook 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/scripts/execute_notebook 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "scripts/check_database 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/scripts/check_database 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/reservoir 2.parquet",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/reservoir 2.parquet",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/administrative 2.geojson",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/administrative 2.geojson",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/points 2.csv",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/points 2.csv",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/provenance 2.json",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/provenance 2.json",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/nve_area_metadata 2.json",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/nve_area_metadata 2.json",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/regions 2.geojson",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/regions 2.geojson",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/electricity 2.geojson",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/electricity 2.geojson",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/administrative/administrative 2.dbf",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/administrative/administrative 2.dbf",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/administrative/administrative 2.shx",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/administrative/administrative 2.shx",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/administrative/administrative 2.shp",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/administrative/administrative 2.shp",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/administrative/administrative 2.cpg",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/administrative/administrative 2.cpg",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/administrative/administrative 2.prj",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/administrative/administrative 2.prj",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/electricity/electricity 2.dbf",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/electricity/electricity 2.dbf",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/electricity/electricity 2.shx",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/electricity/electricity 2.shx",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/electricity/electricity 2.shp",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/electricity/electricity 2.shp",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/electricity/electricity 2.cpg",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/electricity/electricity 2.cpg",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/regions/electricity/electricity 2.prj",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/regions/electricity/electricity 2.prj",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/weather/NO3_2024-01-01_2024-12-31_pilot_1 2.parquet",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/weather/NO3_2024-01-01_2024-12-31_pilot_1 2.parquet",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "data/weather/NO3_2024-01-01_2024-12-31_pilot_1 2.json",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/data/weather/NO3_2024-01-01_2024-12-31_pilot_1 2.json",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "pages/4_Electricity 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/pages/4_Electricity 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "pages/6_Weather 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/pages/6_Weather 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "pages/1_Home 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/pages/1_Home 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "pages/5_Seasonality 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/pages/5_Seasonality 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/part3_sync_manifest 2.json",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/part3_sync_manifest 2.json",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/README 2.md",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/README 2.md",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/requirements 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/requirements 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/app 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/app 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/requirements-dev 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/requirements-dev 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/.gitignore 2",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/.gitignore 2",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/tests/test_weather_download 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/tests/test_weather_download 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/tests/test_analysis 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/tests/test_analysis 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/tests/test_streamlit 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/tests/test_streamlit 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/scripts/prepare_data 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/scripts/prepare_data 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/scripts/export_pdf 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/scripts/export_pdf 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/scripts/download_weather 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/scripts/download_weather 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/scripts/sync_to_project 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/scripts/sync_to_project 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/scripts/discover_regions 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/scripts/discover_regions 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/scripts/build_notebook 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/scripts/build_notebook 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/scripts/execute_notebook 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/scripts/execute_notebook 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/scripts/check_database 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/scripts/check_database 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/data/regions/points 2.csv",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/data/regions/points 2.csv",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/data/regions/provenance 2.json",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/data/regions/provenance 2.json",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/data/regions/regions 2.geojson",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/data/regions/regions 2.geojson",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/pages/4_Electricity 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/pages/4_Electricity 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/pages/2_Data 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/pages/2_Data 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/pages/6_Weather 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/pages/6_Weather 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/pages/5_Seasonality 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/pages/5_Seasonality 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/pages/3_Plot 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/pages/3_Plot 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/reports/SCREENCAST 2.md",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/reports/SCREENCAST 2.md",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/reports/weather_download 2.log",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/reports/weather_download 2.log",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/reports/test_results 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/reports/test_results 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/reports/AI_USAGE 2.md",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/reports/AI_USAGE 2.md",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/reports/streamlit_tests 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/reports/streamlit_tests 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/reports/DEVELOPMENT_LOG 2.md",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/reports/DEVELOPMENT_LOG 2.md",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/reports/ASSUMPTIONS 2.md",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/reports/ASSUMPTIONS 2.md",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/src/reservoir 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/src/reservoir 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/src/geography 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/src/geography 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/src/ui 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/src/ui 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/src/weather 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/src/weather 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/src/__init__ 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/src/__init__ 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/before_part3/src/analysis 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/before_part3/src/analysis 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/part2_before_part3/README 2.MD",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/part2_before_part3/README 2.MD",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/part2_before_part3/requirements 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/part2_before_part3/requirements 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/part2_before_part3/app 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/part2_before_part3/app 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/part2_before_part3/.gitignore 2",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/part2_before_part3/.gitignore 2",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/part2_before_part3/pages/4_Electricity 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/part2_before_part3/pages/4_Electricity 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/part2_before_part3/pages/2_Data 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/part2_before_part3/pages/2_Data 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/part2_before_part3/pages/3_Plot 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/part2_before_part3/pages/3_Plot 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "backups/upstream_main/README 2.MD",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/backups/upstream_main/README 2.MD",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "notebooks/IND320_Project(P2) 2.ipynb",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/notebooks/IND320_Project(P2) 2.ipynb",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "notebooks/IND320_Project(P3) 2.ipynb",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/notebooks/IND320_Project(P3) 2.ipynb",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "notebooks/IND320_Project(P1) 2.ipynb",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/notebooks/IND320_Project(P1) 2.ipynb",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/FEEDBACK_RESPONSE 2.md",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/FEEDBACK_RESPONSE 2.md",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/SCREENCAST 2.md",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/SCREENCAST 2.md",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/IND320_Project(P3) 2.html",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/IND320_Project(P3) 2.html",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/database_check 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/database_check 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/lof_results 2.csv",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/lof_results 2.csv",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/test_results 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/test_results 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/IND320_Project(P3) 2.pdf",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/IND320_Project(P3) 2.pdf",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/AI_USAGE 2.md",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/AI_USAGE 2.md",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/streamlit_tests 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/streamlit_tests 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/pdf_dependencies 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/pdf_dependencies 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/DELIVERY_CHECKLIST 2.md",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/DELIVERY_CHECKLIST 2.md",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/DEVELOPMENT_LOG 2.md",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/DEVELOPMENT_LOG 2.md",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/geography_preparation 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/geography_preparation 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/spc_results 2.csv",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/spc_results 2.csv",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/notebook_execution 2.txt",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/notebook_execution 2.txt",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/ASSUMPTIONS 2.md",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/ASSUMPTIONS 2.md",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/part2/IND320_Project(P2) 2.pdf",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/part2/IND320_Project(P2) 2.pdf",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/figures/reservoir_stl 2.png",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/figures/reservoir_stl 2.png",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/figures/precipitation_spc 2.png",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/figures/precipitation_spc 2.png",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/figures/temperature_lof 2.png",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/figures/temperature_lof 2.png",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/figures/reservoir_spectrogram 2.png",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/figures/reservoir_spectrogram 2.png",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "reports/part1/IND320_Project(P1) 2.pdf",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/reports/part1/IND320_Project(P1) 2.pdf",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "src/reservoir 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/src/reservoir 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "src/geography 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/src/geography 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "src/ui 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/src/ui 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "src/weather 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/src/weather 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "src/__init__ 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/src/__init__ 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "src/analysis 2.py",
+      "to": "archive/cleanup_2026_10_29/numbered_copies/src/analysis 2.py",
+      "reason": "numbered copy preserved without content replacement"
+    },
+    {
+      "from": "IND320_Project(P1).ipynb",
+      "to": "archive/cleanup_2026_10_29/previous_root_deliverables/IND320_Project(P1).ipynb",
+      "reason": "historical original preserved; organized notebook and report copies remain available"
+    },
+    {
+      "from": "IND320_Project(P1).pdf",
+      "to": "archive/cleanup_2026_10_29/previous_root_deliverables/IND320_Project(P1).pdf",
+      "reason": "historical original preserved; organized notebook and report copies remain available"
+    },
+    {
+      "from": "IND320_Project(P2).ipynb",
+      "to": "archive/cleanup_2026_10_29/previous_root_deliverables/IND320_Project(P2).ipynb",
+      "reason": "historical original preserved; organized notebook and report copies remain available"
+    },
+    {
+      "from": "IND320_Project(P2).pdf",
+      "to": "archive/cleanup_2026_10_29/previous_root_deliverables/IND320_Project(P2).pdf",
+      "reason": "historical original preserved; organized notebook and report copies remain available"
+    },
+    {
+      "from": "IND320_Screencast(P1).mov",
+      "to": "archive/cleanup_2026_10_29/previous_root_deliverables/IND320_Screencast(P1).mov",
+      "reason": "historical original preserved; organized notebook and report copies remain available"
+    },
+    {
+      "from": "IND320_Screencast(P2).mov",
+      "to": "archive/cleanup_2026_10_29/previous_root_deliverables/IND320_Screencast(P2).mov",
+      "reason": "historical original preserved; organized notebook and report copies remain available"
+    }
+  ]
+}
