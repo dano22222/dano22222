@@ -33,7 +33,7 @@ requirements.txt               app dependencies
 requirements-dev.txt           testing and notebook dependencies
 ```
 
-Historical root notebooks, PDFs and videos remain where they were. Copies of the historical PDFs are also organised under reports/part1/ and reports/part2/. Notebook copies in `notebooks/` do not replace the originals. Existing README screencast information is retained in `backups/part2_before_part3/README.MD`. Use the existing Part 2 video link in its notebook for that submission.
+Historical root notebooks, PDFs and videos are preserved under `archive/cleanup_2026_10_29/previous_root_deliverables/`. Use `notebooks/` for the working notebooks and `reports/part1/` and `reports/part2/` for historical PDFs. Numbered copies are retained under `archive/cleanup_2026_10_29/numbered_copies/`, with a complete move manifest; nothing was deleted. Existing README screencast information is retained in `backups/part2_before_part3/README.MD`. Use the existing Part 2 video link in its notebook for that submission.
 
 ## Installation
 

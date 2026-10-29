@@ -22,3 +22,7 @@ New untracked files with names ending in " 2" were observed in the original proj
 4. Upload reports/IND320_Project(P3).pdf to Canvas. Mention that feedback improvements are included if updating a previous submission.
 
 The development log and AI disclosure identify AI assistance explicitly. The geographic administrative proxy and VASS metadata discrepancy are documented scientific limitations, rather than undisclosed exact catchment claims. Raw weather point caches are retained locally; the reproducible downloader, sampled coordinates, complete regional mean and provenance are included in GitHub.
+
+## Latest student edits and folder cleanup
+
+The student-edited Part 3 notebook is preserved with all 12 code cells executed and no saved error outputs. Its AI usage section is also reflected in AI_USAGE.md. A fresh nbconvert WebPDF export contains 22 pages, replacing the earlier custom 13-page export. Historical root files were moved without content changes into archive/cleanup_2026_10_29/previous_root_deliverables/. Numbered copies remain locally archived and ignored by Git; the move manifest documents all locations. VS Code settings hide local environments and caches. The application source and original URL are unchanged.
