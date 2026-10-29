@@ -18,3 +18,5 @@ reports/app_screenshots/
 **/app_screenshots/
 reports/environment_install.txt
 reports/pdf_dependencies.txt
+
+.venv-compat/
