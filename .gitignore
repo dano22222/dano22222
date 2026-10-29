@@ -4,3 +4,12 @@ ind320.env/
 __pycache__/
 *.pyc
 .streamlit/secrets.toml
+.venv/
+.pytest_cache/
+data/weather/*/point_*.parquet
+data/weather/*/point_*.json
+reports/weather_download.log
+.DS_Store
+*.mov
+reports/pdf_preview/
+reports/app_screenshots/
