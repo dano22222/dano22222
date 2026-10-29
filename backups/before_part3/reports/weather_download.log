@@ -1,0 +1,16 @@
+{
+  "points": 1000,
+  "hours_per_point": 8784,
+  "point_hours": 8784000,
+  "values": 17568000,
+  "float32_MB": 70.27,
+  "estimated_transfer_MB": [
+    211,
+    703
+  ],
+  "estimated_api_call_units": 26142.9
+}
+NO3: 10 new points; current ID 9
+NO3: 20 new points; current ID 19
+NO3: 30 new points; current ID 29
+NO3: 40 new points; current ID 39

@@ -6,11 +6,12 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 from dotenv import load_dotenv
+import certifi
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 
 
-# Page title
+#page title
 st.title("Cross-Border Electricity Flows")
 st.write(
     "Explore electricity imports and exports between "
@@ -18,15 +19,15 @@ st.write(
 )
 
 
-# Connect to MongoDB Atlas
+#connecting to mongodb atlas
 @st.cache_resource
 def get_collection():
     load_dotenv()
 
-    # Local development uses .env
+    #local development uses .env
     mongo_uri = os.getenv("MONGODB_URI")
 
-    # Streamlit Cloud uses secrets
+    #streamlit cloud uses secrets
     if not mongo_uri:
         try:
             mongo_uri = st.secrets["MONGODB_URI"]
@@ -35,7 +36,8 @@ def get_collection():
 
     client = MongoClient(
         mongo_uri,
-        serverSelectionTimeoutMS=10000
+        serverSelectionTimeoutMS=10000,
+        tlsCAFile=certifi.where()
     )
 
     client.admin.command("ping")
@@ -43,7 +45,7 @@ def get_collection():
     return client["ind320"]["cross_border_flows"]
 
 
-# Cache database queries to avoid repeated downloads
+#cache database queries to avoid repeated downloads
 @st.cache_data(ttl=3600)
 def load_electricity_data(connection, year):
     collection = get_collection()
@@ -74,7 +76,7 @@ def load_electricity_data(connection, year):
     return df
 
 
-# Establish connection and identify available connections
+#establishing connection and identify available connections
 try:
     collection = get_collection()
     connections = sorted(collection.distinct("connection"))
@@ -90,11 +92,11 @@ if not connections:
     st.stop()
 
 
-# Split the page into two columns
+#then splitting the page into two columns
 left_col, right_col = st.columns(2, gap="large")
 
 
-# LEFT COLUMN: connection, year and pie chart
+#left coulumn is connection, year and pie chart
 with left_col:
     st.subheader("Annual Electricity Exchange")
 
@@ -123,7 +125,7 @@ with left_col:
     )
 
 
-# Retrieve the selected year's data
+#retrieve the selected year's data
 try:
     df = load_electricity_data(
         selected_connection,
@@ -139,7 +141,7 @@ if df.empty:
 
 
 with left_col:
-    # Aggregate energy by import and export direction
+    #aggregate energy by import and export direction
     energy_totals = (
         df.groupby("direction")["energy_mwh"]
         .sum()
@@ -168,7 +170,7 @@ with left_col:
         st.info("No energy exchange recorded for this year.")
 
 
-# RIGHT COLUMN: month selection and line chart
+#right coulumn is month selection and line chart
 with right_col:
     st.subheader("Electricity Flow Over Time")
 
@@ -198,7 +200,7 @@ with right_col:
             df["month"].isin(selected_month_numbers)
         ].copy()
 
-        # Create separate lines for import and export
+        #creation separates lines for import and export
         plot_df = monthly_df.pivot_table(
             index="timestamp",
             columns="direction",
@@ -219,7 +221,7 @@ with right_col:
         st.info("Select at least one month.")
 
 
-# Document the data source
+#documenting the data source
 st.divider()
 
 with st.expander("About the data source"):

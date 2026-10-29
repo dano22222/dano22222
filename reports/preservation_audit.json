@@ -1,0 +1,42 @@
+{
+  "IND320_Project(P1).ipynb": {
+    "matches_initial_copy": true,
+    "sha256": "00dbe8c6ce9d682b35afe8bffe46119730f321fc4b11735f1f625e618efd38e0"
+  },
+  "IND320_Project(P2).ipynb": {
+    "matches_initial_copy": true,
+    "sha256": "fff00e06069cc449ffb2b7da9188d52b2a0b5de97c6bdd50bd317c3fe23c85e3"
+  },
+  "backups/part2_before_part3/requirements.txt": {
+    "backup_matches_initial_copy": true
+  },
+  "backups/part2_before_part3/README.MD": {
+    "backup_matches_initial_copy": true
+  },
+  "backups/part2_before_part3/.gitignore": {
+    "backup_matches_initial_copy": true
+  },
+  "backups/part2_before_part3/app.py": {
+    "backup_matches_initial_copy": true
+  },
+  "backups/part2_before_part3/pages/3_Plot.py": {
+    "backup_matches_initial_copy": true
+  },
+  "backups/part2_before_part3/pages/4_Electricity.py": {
+    "backup_matches_initial_copy": true
+  },
+  "backups/part2_before_part3/pages/2_Data.py": {
+    "backup_matches_initial_copy": true
+  },
+  "nve_api.py": {
+    "matches_initial_copy": true
+  },
+  "IND320_Screencast(P1).mov": {
+    "present": true,
+    "size_matches_initial_inventory": true
+  },
+  "IND320_Screencast(P2).mov": {
+    "present": true,
+    "size_matches_initial_inventory": true
+  }
+}
