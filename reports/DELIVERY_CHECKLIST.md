@@ -17,10 +17,10 @@
 - [x] Execute all 12 notebook code cells on the complete regional dataset.
 - [x] Export and visually inspect the 13-page PDF, including code and outputs.
 - [x] Organise notebooks and reports while retaining historical root files.
-- [x] Prepare README.md, AI documentation, a 457-word development log and a five minute script.
+- [x] Prepare README.md, AI documentation, a 472-word development log and a five minute script.
 - [x] Keep the original Streamlit URL; configure its runtime to match Python 3.11.
 - [x] Complete the Part 3 merge into main and verify remote publication (5745961).
-- [ ] Verify the updated public app and its weather/reservoir/electricity pages.
+- [x] Verify the public Data page, both seasonality tabs, both weather tabs and real MongoDB electricity plots at the original URL (29 October 2026).
 - [ ] Student records the five minute video and supplies an accessible link.
 - [ ] Student uploads the PDF to Canvas and adds the video link in the submission comment.
 
