@@ -233,3 +233,111 @@ def download_sample(region, start, end, n_points=5, variables=VARIABLES, session
                 'grid_cells': [{'latitude': m['latitude'], 'longitude': m['longitude'],
                                 'elevation': m['elevation']} for _, m in results]}
     return mean, metadata
+
+
+#daily aggregates for part 4 (map, sliding window correlation and forecasting).
+#daily data are much smaller than hourly data for multi year periods, and the
+#days are cut in norwegian local time (europe/oslo), the same calendar as the
+#weekly nve reservoir statistics
+DAILY_VARIABLES = ['temperature_2m_mean', 'precipitation_sum', 'rain_sum', 'snowfall_sum', 'wind_speed_10m_max']
+DAILY_UNITS = {'temperature_2m_mean': '°C', 'precipitation_sum': 'mm', 'rain_sum': 'mm',
+               'snowfall_sum': 'cm', 'wind_speed_10m_max': 'km/h'}
+#how each daily variable is aggregated to weeks (sums for amounts, means for states)
+WEEKLY_AGGREGATION = {'temperature_2m_mean': 'mean', 'precipitation_sum': 'sum', 'rain_sum': 'sum',
+                      'snowfall_sum': 'sum', 'wind_speed_10m_max': 'mean'}
+#readable names used in the app and in plots
+WEATHER_LABELS = {'temperature_2m_mean': 'Temperature (°C)', 'precipitation_sum': 'Precipitation (mm)',
+                  'rain_sum': 'Rain (mm)', 'snowfall_sum': 'Snowfall (cm)',
+                  'wind_speed_10m_max': 'Daily max wind speed (km/h)'}
+#hourly variable that matches each daily variable (for the hourly spc and lof analyses)
+HOURLY_EQUIVALENT = {'temperature_2m_mean': 'temperature_2m', 'precipitation_sum': 'precipitation',
+                     'rain_sum': 'rain', 'snowfall_sum': 'snowfall', 'wind_speed_10m_max': 'wind_speed_10m'}
+HOURLY_LABELS = {'temperature_2m': 'Temperature (°C)', 'precipitation': 'Precipitation (mm per hour)',
+                 'rain': 'Rain (mm per hour)', 'snowfall': 'Snowfall (cm per hour)',
+                 'relative_humidity_2m': 'Relative humidity (%)', 'wind_speed_10m': 'Wind speed (km/h)',
+                 'wind_gusts_10m': 'Wind gusts (km/h)', 'cloud_cover': 'Cloud cover (%)'}
+
+
+def latest_era5_date():
+    """era5 is published with about five days delay; later days are not requested."""
+    return (pd.Timestamp.now(tz='Europe/Oslo') - pd.Timedelta(days=6)).normalize().tz_localize(None)
+
+
+def _parse_daily(payload, variables):
+    """turn one location of a daily api response into a dataframe indexed by local date."""
+    if payload.get('error'):
+        raise ValueError(payload.get('reason', 'Open-Meteo error'))
+    units = payload.get('daily_units', {})
+    for variable in variables:
+        if units.get(variable) != DAILY_UNITS[variable]:
+            raise ValueError(f'Unexpected unit for {variable}: {units.get(variable)}')
+    df = pd.DataFrame(payload['daily']).rename(columns={'time': 'date'})
+    df['date'] = pd.to_datetime(df.date)
+    #missing values arrive as null; they stay nan and are handled by the weekly aggregation
+    return df.set_index('date')[list(variables)].apply(pd.to_numeric, errors='coerce').astype('float64')
+
+
+def download_daily(latitudes, longitudes, start, end, variables=DAILY_VARIABLES, session=None):
+    """daily era5 aggregates for several locations in one request (days in europe/oslo time)."""
+    if pd.Timestamp(start) > pd.Timestamp(end):
+        raise ValueError('Start must not follow end.')
+    session = session or requests.Session()
+    params = {'latitude': ','.join(f'{float(v):.6f}' for v in latitudes),
+              'longitude': ','.join(f'{float(v):.6f}' for v in longitudes),
+              'start_date': str(pd.Timestamp(start).date()), 'end_date': str(pd.Timestamp(end).date()),
+              'daily': ','.join(variables), 'models': 'era5', 'timezone': 'Europe/Oslo',
+              'cell_selection': 'land'}
+    payload = _get(params, session)
+    payloads = payload if isinstance(payload, list) else [payload]
+    if len(payloads) != len(latitudes):
+        raise ValueError('Open-Meteo returned an unexpected number of locations.')
+    return [_parse_daily(p, variables) for p in payloads]
+
+
+def download_daily_regions(regions, start, end, n_points=3, variables=DAILY_VARIABLES, session=None):
+    """regional daily means for several regions with a single api request.
+
+    the first n_points sampled locations of every region are requested together
+    and averaged per region. returns a dict {region: daily dataframe}.
+    """
+    points = pd.concat([load_points(r).head(int(n_points)) for r in regions], ignore_index=True)
+    frames = download_daily(points.latitude, points.longitude, start, end, variables, session)
+    result = {}
+    for region in regions:
+        selected = [f for f, r in zip(frames, points.region) if r == region]
+        #mean over the locations, ignoring a missing value at a single location
+        result[region] = pd.concat(selected).groupby(level=0).mean()
+    return result
+
+
+def download_daily_sample(region, start, end, n_points=3, variables=DAILY_VARIABLES, session=None):
+    """daily mean of the first n_points sampled locations of one region."""
+    return download_daily_regions([region], start, end, n_points, variables, session)[region]
+
+
+def weekly_weather(daily, min_days=7):
+    """aggregate daily weather to weeks ending on sunday (the nve reservoir weeks).
+
+    amounts (precipitation, rain, snow) are summed and states (temperature,
+    wind) are averaged. weeks with fewer than min_days valid days become nan
+    instead of being based on part of a week.
+    """
+    rules = {c: WEEKLY_AGGREGATION.get(c, 'mean') for c in daily.columns}
+    weekly = daily.resample('W-SUN').agg(rules)
+    counts = daily.resample('W-SUN').count()
+    return weekly.where(counts >= min_days)
+
+
+ELEVATION_URL = 'https://api.open-meteo.com/v1/elevation'
+
+
+def elevation(latitude, longitude, session=None):
+    """terrain height in metres above sea level (copernicus dem 90 m) from the open-meteo elevation api."""
+    session = session or requests.Session()
+    response = session.get(ELEVATION_URL, params={'latitude': f'{float(latitude):.5f}',
+                                                  'longitude': f'{float(longitude):.5f}'}, timeout=20)
+    response.raise_for_status()
+    values = response.json().get('elevation') or []
+    if not values or values[0] is None:
+        raise ValueError('No elevation returned for this point.')
+    return float(values[0])
