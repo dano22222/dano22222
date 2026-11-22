@@ -137,7 +137,7 @@ def download_point(latitude, longitude, start, end, session=None, variables=VARI
 
 def load_points(region):
     """the fixed random sample of locations for one region, ordered by point id."""
-    points = pd.read_csv(ROOT / 'data/regions/points.csv')
+    points = pd.read_parquet(ROOT / 'data/regions/points.parquet')
     points = points.loc[points.region == region].sort_values('point_id')
     if points.empty:
         raise ValueError(f'Unknown region {region}')
@@ -154,7 +154,7 @@ def download_region(region, start, end, approved=False, max_points=None, delay=2
     """download all sampled locations of a region and return their hourly mean.
 
     region is a key such as NO3, start and end are dates (yyyy-mm-dd). the
-    coordinates are looked up in data/regions/points.csv. every point is saved
+    coordinates are looked up in data/regions/points.parquet. every point is saved
     as its own parquet file, so a run stopped by the api quota can be resumed
     and already downloaded points are reused. the mean is saved to
     data/weather/<region>_<start>_<end>_mean.parquet when all 1000 points are present.
@@ -215,15 +215,32 @@ def load_region(region, start='2024-01-01', end='2024-12-31'):
     return validate_hourly(pd.read_parquet(path), start, end), metadata
 
 
-def download_sample(region, start, end, n_points=5, variables=VARIABLES, session=None):
+def download_sample(region, start, end, n_points=100, variables=VARIABLES, session=None,
+                    progress=None, pause=time.sleep):
     """quick regional estimate: the mean of the first n_points sampled locations.
 
-    the points in points.csv are already in random order, so the first n
-    points are a random subset of the region. all locations are fetched in a
-    single api request. returns (hourly mean dataframe, metadata).
+    the points in points.parquet are already in random order, so the first n
+    points are a random subset of the region. the default is 100 locations
+    (part 3 feedback); they are fetched in a few batched api requests, which
+    takes some minutes for a full year because of the open meteo limit per
+    minute. progress is an optional callback with the share downloaded.
+    returns (hourly mean dataframe, metadata).
     """
     points = load_points(region).head(int(n_points))
-    results = download_points(points.latitude, points.longitude, start, end, variables, session)
+    session = session or requests.Session()
+    #one location costs about 26 call units per year (8 variables); the locations are sent
+    #in batches that stay below the open meteo limit per minute, with a pause in between
+    days = len(expected_hours(start, end)) / 24
+    units = max(1, days / 14) * max(1, len(variables) / 10)
+    batch = max(1, int(UNITS_PER_MINUTE // units))
+    results = []
+    for first in range(0, len(points), batch):
+        if first:
+            pause(61)
+        part = points.iloc[first:first + batch]
+        results.extend(download_points(part.latitude, part.longitude, start, end, variables, session))
+        if progress:
+            progress(min(1., (first + len(part)) / len(points)))
     frames = [df for df, _ in results]
     mean = sum(frame.astype('float64') for frame in frames) / len(frames)
     mean.index.name = 'timestamp'

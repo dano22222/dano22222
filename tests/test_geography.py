@@ -15,7 +15,7 @@ def test_area_weighted_sampling_and_reproducibility():
 
 def test_all_stored_points_inside_regions():
     regions=gpd.read_file(ROOT/'data/regions/regions.geojson').set_index('region')
-    points=pd.read_csv(ROOT/'data/regions/points.csv')
+    points=pd.read_parquet(ROOT/'data/regions/points.parquet')
     for key,part in points.groupby('region'):
         assert len(part)==1000 and part.point_id.nunique()==1000
         geo=gpd.GeoSeries(gpd.points_from_xy(part.longitude,part.latitude),crs=4326)

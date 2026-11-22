@@ -201,3 +201,23 @@ def test_long_daily_download_is_split_by_year_and_respects_the_minute_limit():
     assert len(frames) == 3 and len(frames[0]) == 3652 and not frames[0].index.has_duplicates
     #3 locations x 26 units per year: a pause is needed before the seventh year
     assert len(pauses) >= 1
+
+
+def test_weather_sample_of_100_locations_is_downloaded_in_batches():
+    from unittest.mock import patch
+    from src import weather
+    calls, pauses, progress = [], [], []
+
+    def fake(lat, lon, start, end, variables, session):
+        calls.append(len(lat))
+        index = weather.expected_hours(start, end)
+        meta = {'latitude': 63., 'longitude': 10., 'elevation': 100.}
+        return [(pd.DataFrame({v: 1. for v in variables}, index=index), meta) for _ in lat]
+
+    with patch.object(weather, 'download_points', side_effect=fake):
+        mean, meta = weather.download_sample('NO3', '2024-01-01', '2024-12-31', session=MagicMock(),
+                                             progress=progress.append, pause=pauses.append)
+    #100 locations of about 26 units each, at most 500 units per minute
+    assert meta['points'] == 100 and sum(calls) == 100 and max(calls) <= 19
+    assert len(pauses) == len(calls) - 1 and progress[-1] == 1.
+    assert len(mean) == 8784

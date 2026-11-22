@@ -19,7 +19,11 @@ from src.plots import spc_figure, satv_figure, lof_figure
 
 @st.cache_data(ttl=None, max_entries=64, show_spinner=False)
 def get_weather(region, year, n_points):
-    """download (once per region, year and sample size) the mean of n_points sampled locations."""
+    """download (once per region, year and sample size) the mean of n_points sampled locations.
+
+    the result is cached without expiry, so the slow first download of 100 locations is
+    only made once per region and year on the server.
+    """
     return download_sample(region, f'{year}-01-01', f'{year}-12-31', n_points)
 
 
@@ -42,8 +46,11 @@ full_available = (WEATHER_DIR / f'{region}_{start}_{end}_mean.parquet').exists()
 
 #download settings are tucked away; the defaults work without opening this
 with st.expander('Weather download settings'):
-    n_points = st.select_slider('Locations in the regional sample', options=[1, 3, 5, 10, 20], value=5,
-                                help='The first locations of the 1000 random points sampled for this region.')
+    #100 of the 1000 sampled locations by default (part 3 feedback); fewer are faster to download
+    n_points = st.select_slider('Locations in the regional sample', options=[5, 10, 20, 50, 100], value=100,
+                                help='The first locations of the 1000 random points sampled for this region. '
+                                     '100 locations take a few minutes the first time (Open-Meteo limit per '
+                                     'minute) and are cached afterwards.')
     estimate = estimate_download(start, end, n_points, VARIABLES)
     st.caption(f"{n_points} location(s) × {estimate['hours_per_point']:,} hours × {len(VARIABLES)} variables "
                f"≈ {estimate['estimated_api_call_units']:.0f} Open-Meteo call units (free limit: 10 000 per day).")
@@ -57,7 +64,8 @@ if use_full:
     source = f'{region} | complete mean of 1000 sampled locations (downloaded in the notebook)'
 else:
     try:
-        with st.spinner(f'Downloading ERA5 weather for {region}, {year}...'):
+        with st.spinner(f'Downloading ERA5 weather for {n_points} locations in {region}, {year}. '
+                        'The first download of 100 locations takes a few minutes; later visits use the cache.'):
             weather, metadata = get_weather(region, year, n_points)
     except WeatherRateLimit as error:
         st.warning(f'{error} Try again later, or choose fewer locations.')
