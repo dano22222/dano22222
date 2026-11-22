@@ -221,3 +221,33 @@ def test_weather_sample_of_100_locations_is_downloaded_in_batches():
     assert meta['points'] == 100 and sum(calls) == 100 and max(calls) <= 19
     assert len(pauses) == len(calls) - 1 and progress[-1] == 1.
     assert len(mean) == 8784
+
+
+def test_crossing_quantiles_keep_both_original_limits():
+    #lower 80, upper 20 and forecast 40 must give the interval 20 to 80 around an unchanged forecast
+    from unittest.mock import patch
+    import src.forecast as fc
+
+    class Fixed:
+        def __init__(self, value):
+            self.value = value
+
+        def fit(self, y, x):
+            return self
+
+        def predict(self, future_x, horizon):
+            return np.full(horizon, self.value)
+
+    values = iter([40., 80., 20.])
+    with patch.object(fc, '_make_model', side_effect=lambda *a, **k: Fixed(next(values))):
+        result = fc.forecast_filling(weekly_signal(years=4), horizon=1, history_years=3)
+    row = result.forecast.iloc[0]
+    assert (row.lower, row.forecast, row.upper) == (20., 40., 80.)
+
+
+def test_reference_and_backtest_use_the_same_origins():
+    from src.forecast import default_origins
+    series = weekly_signal(years=10)
+    table = backtest(series, horizon=26, history_years=5)
+    expected = [series.index[series.index <= o].max().date() for o in default_origins(series, 26)]
+    assert list(table.origin) == expected
