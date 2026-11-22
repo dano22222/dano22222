@@ -282,13 +282,27 @@ def forecast_filling(target, exog=None, train_end=None, history_years=None, hori
         predictions[name] = model.predict(x_future, steps)
     forecast = pd.DataFrame(predictions, index=future_index).clip(0, 100)
     #the quantile models can cross the forecast; widen the band where needed but never change the forecast itself
-    forecast['lower'] = np.minimum(forecast[['lower', 'upper']].min(axis=1), forecast['forecast'])
-    forecast['upper'] = np.maximum(forecast[['lower', 'upper']].max(axis=1), forecast['forecast'])
+    #both new limits are computed from the original values before either is stored
+    low = np.minimum.reduce([forecast['lower'], forecast['upper'], forecast['forecast']])
+    high = np.maximum.reduce([forecast['lower'], forecast['upper'], forecast['forecast']])
+    forecast['lower'], forecast['upper'] = low, high
     if progress:
         progress(1., 'Forecast finished')
     actual = full.loc[full.index > train.index[-1]].reindex(future_index)
     return ForecastResult(history=train, forecast=forecast, actual=actual, settings=settings,
                           seconds=time.perf_counter() - started, exog_columns=list(x_train.columns))
+
+
+def default_origins(target, horizon=26):
+    """the twelve training end dates used by backtest (13 weeks apart, last three years).
+
+    four extra weeks before the end leave room for the last two or four week
+    period at coarser resolutions. the reference forecasts in the notebook use
+    the same dates, so all comparisons are made on identical origins.
+    """
+    series = pd.Series(target).dropna()
+    last = series.index.max() - pd.Timedelta(weeks=horizon + 4)
+    return pd.date_range(end=last, periods=12, freq='13W')
 
 
 def backtest(target, exog=None, origins=None, horizon=26, **settings):
@@ -304,9 +318,7 @@ def backtest(target, exog=None, origins=None, horizon=26, **settings):
     """
     series = pd.Series(target).dropna()
     if origins is None:
-        #four extra weeks leave room for the last two or four week period at coarser resolutions
-        last = series.index.max() - pd.Timedelta(weeks=horizon + 4)
-        origins = pd.date_range(end=last, periods=12, freq='13W')
+        origins = default_origins(series, horizon)
     rows = []
     for origin in origins:
         origin = series.index[series.index <= origin].max()
