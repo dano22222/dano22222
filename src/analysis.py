@@ -1,7 +1,9 @@
 """reusable part 3 analyses, shared by the notebook and the streamlit app.
 
 every function takes a pandas series with a regular DatetimeIndex and
-returns a matplotlib figure plus the numbers behind it:
+returns a matplotlib figure plus the numbers behind it. with plot=False no
+matplotlib figure is made (the figure is None); the streamlit app then draws
+interactive plotly figures from the returned numbers (src/plots.py):
   spc_analysis          precipitation outliers (dct high pass + robust spc limits)
   lof_analysis          temperature anomalies (local outlier factor)
   stl_analysis          seasonal trend decomposition of reservoir filling
@@ -43,7 +45,7 @@ def style(ax, title, ylabel, xlabel='Date'):
     ax.figure.autofmt_xdate()
 
 
-def spc_analysis(series, cutoff_days=30., n_sigma=3.):
+def spc_analysis(series, cutoff_days=30., n_sigma=3., label='Precipitation (mm per hour)', plot=True):
     """precipitation outliers from statistical process control on dct high pass values.
 
     steps:
@@ -55,12 +57,14 @@ def spc_analysis(series, cutoff_days=30., n_sigma=3.):
       4. robust statistics over the whole year: median and mad (scaled to
          match the standard deviation of a normal distribution).
       5. spc limits = baseline + median +/- n_sigma * mad, i.e. on the original scale.
-    returns the figure, a table with value, baseline, limits and outlier
-    flag per hour, and a summary dictionary.
+    the method was first used for precipitation and works for any hourly
+    weather property (part 4 uses temperature as default in the app); label
+    is the axis text. returns the figure, a table with value, baseline,
+    limits, satv and outlier flag per hour, and a summary dictionary.
     """
     s = clean_series(series)
     if s.index[1] - s.index[0] != pd.Timedelta(hours=1):
-        raise ValueError("spc expects hourly precipitation observations.")
+        raise ValueError("spc expects hourly weather observations.")
     if cutoff_days <= 0 or not np.isfinite(cutoff_days) or n_sigma <= 0 or not np.isfinite(n_sigma):
         raise ValueError('Cutoff and sigma multiplier must be finite and positive.')
     #time step in days (1/24 for hourly data) and the frequency of each dct coefficient
@@ -82,22 +86,24 @@ def spc_analysis(series, cutoff_days=30., n_sigma=3.):
     upper = baseline + centre + n_sigma * scale
     flags = (s.values < lower - tolerance) | (s.values > upper + tolerance)
     table = pd.DataFrame({'value': s, 'baseline': baseline, 'lower': lower,
-                          'upper': upper, 'outlier': flags})
-    #plot the original precipitation, the two limit curves and the outliers in red
-    fig, ax = plt.subplots(figsize=(12, 4))
-    ax.plot(s.index, s.values, lw=.7, label='Mean precipitation')
-    ax.plot(s.index, lower, color='darkorange', lw=1, label='Robust SPC limits')
-    ax.plot(s.index, upper, color='darkorange', lw=1)
-    ax.scatter(s.index[flags], s.values[flags], c='crimson', s=12, label='Outlier', zorder=3)
-    style(ax, 'Precipitation: DCT / robust SPC', 'Precipitation (mm per hour)', 'Date (UTC)')
-    ax.legend(loc='upper right')
-    fig.tight_layout()
+                          'upper': upper, 'satv': satv, 'outlier': flags})
+    fig = None
+    if plot:
+        #plot the original values, the two limit curves and the outliers in red
+        fig, ax = plt.subplots(figsize=(12, 4))
+        ax.plot(s.index, s.values, lw=.7, label='Regional mean')
+        ax.plot(s.index, lower, color='darkorange', lw=1, label='Robust SPC limits')
+        ax.plot(s.index, upper, color='darkorange', lw=1)
+        ax.scatter(s.index[flags], s.values[flags], c='crimson', s=12, label='Outlier', zorder=3)
+        style(ax, f'{label.split(" (")[0]}: DCT / robust SPC', label, 'Date (UTC)')
+        ax.legend(loc='upper right')
+        fig.tight_layout()
     summary = {'observations': len(s), 'outliers': int(flags.sum()), 'fraction': float(flags.mean()),
                'robust_sigma': scale, 'zero_scale': scale == 0}
     return fig, table, summary
 
 
-def lof_analysis(series, contamination=.01, n_neighbors=48):
+def lof_analysis(series, contamination=.01, n_neighbors=48, label='Temperature (°C)', plot=True):
     """temperature anomalies with the local outlier factor.
 
     each hour is described by two standardized features: the temperature and
@@ -105,11 +111,12 @@ def lof_analysis(series, contamination=.01, n_neighbors=48):
     lof compares how dense the neighbourhood of each hour is with the density
     around its n_neighbors nearest neighbours; the contamination share with
     the lowest relative density is flagged. contamination is an assumption,
-    so flagged hours are unusual, not necessarily wrong.
+    so flagged hours are unusual, not necessarily wrong. any hourly weather
+    property can be used; label is the axis text.
     """
     s = clean_series(series)
     if s.index[1] - s.index[0] != pd.Timedelta(hours=1):
-        raise ValueError("lof expects hourly temperature observations.")
+        raise ValueError("lof expects hourly weather observations.")
     if not 0 < contamination <= .5 or not 2 <= n_neighbors < len(s):
         raise ValueError('Use 0 < contamination <= .5 and 2 <= neighbors < N.')
     features = np.column_stack([s.values, s.diff().fillna(0).values])
@@ -119,17 +126,19 @@ def lof_analysis(series, contamination=.01, n_neighbors=48):
     flags = model.fit_predict(features) == -1
     #a score above 1 means lower density than the neighbours
     table = pd.DataFrame({'value': s, 'lof_score': -model.negative_outlier_factor_, 'outlier': flags})
-    fig, ax = plt.subplots(figsize=(12, 4))
-    ax.plot(s.index, s.values, lw=.7, label='Mean temperature')
-    ax.scatter(s.index[flags], s.values[flags], s=15, color='crimson', label='LOF anomaly', zorder=3)
-    style(ax, 'Temperature: Local Outlier Factor', 'Temperature (°C)', 'Date (UTC)')
-    ax.legend()
-    fig.tight_layout()
+    fig = None
+    if plot:
+        fig, ax = plt.subplots(figsize=(12, 4))
+        ax.plot(s.index, s.values, lw=.7, label='Regional mean')
+        ax.scatter(s.index[flags], s.values[flags], s=15, color='crimson', label='LOF anomaly', zorder=3)
+        style(ax, f'{label.split(" (")[0]}: Local Outlier Factor', label, 'Date (UTC)')
+        ax.legend()
+        fig.tight_layout()
     summary = {'observations': len(s), 'outliers': int(flags.sum()), 'fraction': float(flags.mean())}
     return fig, table, summary
 
 
-def stl_analysis(series, seasonal=13, trend=105, robust=True, period=52):
+def stl_analysis(series, seasonal=13, trend=105, robust=True, period=52, plot=True):
     """stl decomposition of a weekly series: observed = trend + seasonal + residual.
 
     period=52 weeks approximates one year. seasonal and trend are the loess
@@ -143,16 +152,18 @@ def stl_analysis(series, seasonal=13, trend=105, robust=True, period=52):
     if s.index[1] - s.index[0] != pd.Timedelta(days=7):
         raise ValueError("stl expects weekly reservoir observations.")
     result = STL(s, period=period, seasonal=seasonal, trend=trend, robust=robust).fit()
-    fig = result.plot()
-    fig.set_size_inches(12, 8)
-    fig.axes[0].set_title('Reservoir filling: STL decomposition')
-    fig.axes[0].set_ylabel('Fill fraction')
-    fig.axes[-1].set_xlabel('Date')
-    fig.tight_layout()
+    fig = None
+    if plot:
+        fig = result.plot()
+        fig.set_size_inches(12, 8)
+        fig.axes[0].set_title('Reservoir filling: STL decomposition')
+        fig.axes[0].set_ylabel('Fill fraction')
+        fig.axes[-1].set_xlabel('Date')
+        fig.tight_layout()
     return fig, result
 
 
-def spectrogram_analysis(series, window=156, overlap=130):
+def spectrogram_analysis(series, window=156, overlap=130, plot=True):
     """spectrogram of a weekly series with frequencies in cycles per year.
 
     window is the number of weeks in each hann window and overlap the number
@@ -173,11 +184,13 @@ def spectrogram_analysis(series, window=156, overlap=130):
                               noverlap=overlap, detrend='linear', scaling='density')
     #convert window centres from years after the first week into dates
     dates = s.index[0] + pd.to_timedelta(t * 7 * 52, unit='D')
-    fig, ax = plt.subplots(figsize=(12, 4))
-    #log scale (db) so weak components are visible; the floor avoids log(0)
-    mesh = ax.pcolormesh(dates, f, 10 * np.log10(np.maximum(power, 1e-15)), shading='auto', cmap='viridis')
-    ax.set_ylim(0, 6)
-    style(ax, 'Reservoir filling: spectrogram', 'Frequency (cycles per 52-week year)')
-    fig.colorbar(mesh, ax=ax, label='Power density (dB, fraction² / cycles/year)')
-    fig.tight_layout()
-    return fig, {'frequency': f, 'time_years': t, 'power': power}
+    fig = None
+    if plot:
+        fig, ax = plt.subplots(figsize=(12, 4))
+        #log scale (db) so weak components are visible; the floor avoids log(0)
+        mesh = ax.pcolormesh(dates, f, 10 * np.log10(np.maximum(power, 1e-15)), shading='auto', cmap='viridis')
+        ax.set_ylim(0, 6)
+        style(ax, 'Reservoir filling: spectrogram', 'Frequency (cycles per 52-week year)')
+        fig.colorbar(mesh, ax=ax, label='Power density (dB, fraction² / cycles/year)')
+        fig.tight_layout()
+    return fig, {'frequency': f, 'time_years': t, 'power': power, 'dates': dates}

@@ -141,7 +141,8 @@ def prepare_regions(count=1000, seed=320, from_saved=False):
         points = sample_polygon(row.geometry, count, seed + i, regions.loc[i].geometry)
         samples.append(pd.DataFrame({'region': row.region, 'point_id': range(count),
                                      'longitude': points.x, 'latitude': points.y}))
-    pd.concat(samples, ignore_index=True).to_csv(REGION_DIR / 'points.csv', index=False)
+    #parquet instead of csv: typed, compressed and read exactly as written
+    pd.concat(samples, ignore_index=True).to_parquet(REGION_DIR / 'points.parquet', index=False)
     #record where the data came from and how the sample was made
     (REGION_DIR / 'provenance.json').write_text(json.dumps({
         'sources': SOURCES, 'seed': seed, 'points_per_region': count, 'sampling_crs': 'EPSG:3035',
