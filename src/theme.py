@@ -37,11 +37,11 @@ pio.templates['ind320'] = go.layout.Template(layout=go.Layout(
     colorway=COLORWAY,
     font=dict(family='Source Sans Pro, Arial, sans-serif', color=TEXT, size=13),
     paper_bgcolor=BACKGROUND, plot_bgcolor=PANEL,
-    title=dict(font=dict(size=17, color=TEXT), x=0, xanchor='left'),
+    title=dict(font=dict(size=17, color=TEXT), x=0, xanchor='left', y=.98, yanchor='top'),
     xaxis=dict(gridcolor=GRID, zerolinecolor=GRID, linecolor=GRID),
     yaxis=dict(gridcolor=GRID, zerolinecolor=GRID, linecolor=GRID),
     legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1, bgcolor='rgba(0,0,0,0)'),
     hoverlabel=dict(bgcolor='white', font_size=12),
-    margin=dict(l=60, r=20, t=60, b=50),
+    margin=dict(l=60, r=20, t=100, b=50),
     colorscale=dict(sequential=FILL_SCALE)))
 pio.templates.default = 'plotly_white+ind320'
