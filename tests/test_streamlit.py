@@ -31,6 +31,7 @@ def fake_rates(start,end,*args,**kwargs):
 def no_network():
     #every page test runs without internet access
     with patch('src.weather.download_daily',side_effect=fake_daily),\
+         patch('src.weather.UNITS_PER_MINUTE',1e9),\
          patch('src.data.fetch_exchange_rates',side_effect=fake_rates),\
          patch('src.weather.elevation',return_value=123.):
         yield

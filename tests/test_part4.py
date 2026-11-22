@@ -149,3 +149,55 @@ def test_backtest_reports_mean_errors():
     table = backtest(weekly_signal(years=10), horizon=8, model='lags', history_years=5,
                      origins=pd.to_datetime(['2017-06-25', '2018-06-24']))
     assert len(table) == 2 and set(table.attrs['mean']) >= {'mae', 'rmse', 'coverage'}
+
+
+def test_oslo_year_limits_include_the_first_norwegian_hour():
+    from src.timezones import oslo_year_utc_limits
+    start, end = oslo_year_utc_limits(2025)
+    assert start == pd.Timestamp('2024-12-31 23:00', tz='UTC') and end == pd.Timestamp('2025-12-31 23:00', tz='UTC')
+    #an observation at 23:30 utc on new year's eve belongs to the norwegian year 2025
+    assert start <= pd.Timestamp('2024-12-31 23:30', tz='UTC') < end
+
+
+def test_forecast_keeps_its_value_when_quantile_models_cross():
+    #the band is widened around the forecast; the forecast itself is never replaced by a limit
+    series = weekly_signal(years=8)
+    result = forecast_filling(series, train_end='2015-06-28', horizon=12, history_years=5, learning_rate=.1, epochs=1)
+    f = result.forecast
+    assert ((f.lower <= f.forecast) & (f.forecast <= f.upper)).all()
+
+
+@pytest.mark.parametrize('resolution,steps', [('W', 26), ('2W', 13), ('4W', 7)])
+def test_horizon_is_in_weeks_for_every_resolution(resolution, steps):
+    series = weekly_signal(years=8)
+    result = forecast_filling(series, train_end='2015-06-28', horizon=26, history_years=5, resolution=resolution)
+    assert len(result.forecast) == steps
+    span = (result.forecast.index[-1] - result.history.index[-1]).days / 7
+    assert 26 <= span < 26 + 52 / {'W': 52, '2W': 26, '4W': 13}[resolution]
+
+
+def test_backtest_uses_same_origins_for_all_resolutions():
+    series = weekly_signal(years=10)
+    weekly = backtest(series, horizon=26, history_years=5)
+    coarse = backtest(series, horizon=26, history_years=5, resolution='4W')
+    assert list(weekly.origin) == list(coarse.origin)
+    assert (weekly.weeks_compared == 26).all() and (coarse.weeks_compared == 7).all()
+
+
+def test_long_daily_download_is_split_by_year_and_respects_the_minute_limit():
+    from unittest.mock import patch
+    from src import weather
+    calls, pauses = [], []
+
+    def fake(lat, lon, start, end, variables, session):
+        calls.append((pd.Timestamp(start), pd.Timestamp(end)))
+        days = pd.date_range(start, end, freq='D')
+        return [pd.DataFrame({v: 1. for v in variables}, index=days) for _ in lat]
+
+    with patch.object(weather, 'download_daily', side_effect=fake):
+        frames = weather._daily_in_chunks([60, 61, 62], [10, 11, 12], '2014-01-01', '2023-12-31',
+                                          weather.DAILY_VARIABLES, None, pause=pauses.append)
+    assert len(calls) == 10 and calls[0] == (pd.Timestamp('2014-01-01'), pd.Timestamp('2014-12-31'))
+    assert len(frames) == 3 and len(frames[0]) == 3652 and not frames[0].index.has_duplicates
+    #3 locations x 26 units per year: a pause is needed before the seventh year
+    assert len(pauses) >= 1

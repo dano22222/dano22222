@@ -34,8 +34,8 @@ weather_property = weather_property_selector(left, 'Meteorological property')
 reservoir_names = {'change': 'Weekly change in filling (percentage points)', 'level': 'Filling (%)'}
 reservoir_variable = right.selectbox('Reservoir variable', list(reservoir_names), format_func=reservoir_names.get)
 last_year = min(df.date.max().year, latest_era5_date().year)
-years = st.slider('Years', 1996, last_year, (max(1996, last_year - 9), last_year),
-                  help='Ten years of daily weather for three locations is about 800 Open-Meteo call units, cached afterwards.')
+years = st.slider('Years', 1996, last_year, (max(1996, last_year - 5), last_year),
+                  help='Each year of daily weather for three locations is about 80 Open-Meteo call units; long periods are downloaded year by year and cached afterwards.')
 lag_col, window_col = st.columns(2)
 lag = lag_col.slider('Lag (weeks, positive = weather leads)', -26, 26, 0)
 window = window_col.slider('Window length (weeks)', 4, 104, 26, 2)

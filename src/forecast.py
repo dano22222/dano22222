@@ -40,7 +40,10 @@ FUTURE_STRATEGY = {'weather': 'climatology', 'electricity': 'climatology', 'curr
 DEFAULTS = {'model': 'lags', 'resolution': 'W', 'history_years': 10, 'horizon': 26,
             'p': 2, 'd': 1, 'q': 0, 'sp': 1, 'sd': 1, 'sq': 0,
             'lags': 1, 'seasonal_lag': False, 'learning_rate': 0.003, 'epochs': 3,
-            'interval': 0.9, 'exog': ()}
+            'interval': 0.9, 'exog': ('weather',)}
+#weather variables used by default (the best realistic option in the notebook tests, with
+#estimated future weather); the default sources above are used by the streamlit page
+DEFAULT_WEATHER = ('temperature_2m_mean', 'precipitation_sum', 'snowfall_sum')
 
 
 @dataclass
@@ -73,7 +76,9 @@ def resample_series(series, resolution='W'):
         raise ValueError(f'Resolution must be one of {list(RESOLUTIONS)}.')
     if resolution == 'W':
         return series
-    return series.resample(RESOLUTIONS[resolution][0]).mean().dropna()
+    resampled = series.resample(RESOLUTIONS[resolution][0]).mean().dropna()
+    #the last period is incomplete when it ends after the last observed week; it is left out
+    return resampled.loc[resampled.index <= series.index.max()]
 
 
 def combine_exog(exog, resolution='W'):
@@ -221,7 +226,8 @@ def forecast_filling(target, exog=None, train_end=None, history_years=None, hori
                    example {'weather': ..., 'currency': ...}; None or {} for none
     train_end      last date used for training (default: the last observation)
     history_years  length of the training history in years
-    horizon        number of periods to forecast
+    horizon        forecast length in weeks (converted to periods of the chosen
+                   resolution, rounded up, so 26 weeks are 13 two week periods)
     resolution     'W' (weekly), '2W' or '4W'
     future         'climatology' or 'observed' values of exogenous variables
     progress       optional callback(fraction, text) used by streamlit
@@ -260,7 +266,10 @@ def forecast_filling(target, exog=None, train_end=None, history_years=None, hori
             raise ValueError('The selected exogenous data cover less than two years of the training period.')
         first = complete.idxmax()
         train, x_train = train.loc[first:], x_train.loc[first:].ffill()
-    future_index = pd.date_range(train.index[-1], periods=settings['horizon'] + 1, freq=rule)[1:]
+    #the horizon is given in weeks; one period of the chosen resolution covers 52 / steps_per_year weeks
+    steps = int(math.ceil(settings['horizon'] / (52 / steps_per_year)))
+    settings['steps'] = steps
+    future_index = pd.date_range(train.index[-1], periods=steps + 1, freq=rule)[1:]
     x_future = future_exog(exog_table, train, future_index, future)
     #one model for the forecast and one quantile model for each interval limit
     alpha = (1 - settings['interval']) / 2
@@ -270,10 +279,11 @@ def forecast_filling(target, exog=None, train_end=None, history_years=None, hori
         if progress:
             progress(i / len(runs), f'Training the {name} model ({settings["model"]})')
         model = _make_model(settings, steps_per_year, loss).fit(train, x_train)
-        predictions[name] = model.predict(x_future, settings['horizon'])
+        predictions[name] = model.predict(x_future, steps)
     forecast = pd.DataFrame(predictions, index=future_index).clip(0, 100)
-    #quantile models can cross; sort the three values so the band always contains the forecast
-    forecast[['lower', 'forecast', 'upper']] = np.sort(forecast[['lower', 'forecast', 'upper']].to_numpy(), axis=1)
+    #the quantile models can cross the forecast; widen the band where needed but never change the forecast itself
+    forecast['lower'] = np.minimum(forecast[['lower', 'upper']].min(axis=1), forecast['forecast'])
+    forecast['upper'] = np.maximum(forecast[['lower', 'upper']].max(axis=1), forecast['forecast'])
     if progress:
         progress(1., 'Forecast finished')
     actual = full.loc[full.index > train.index[-1]].reindex(future_index)
@@ -286,18 +296,25 @@ def backtest(target, exog=None, origins=None, horizon=26, **settings):
 
     origins are training end dates; by default twelve dates, 13 weeks apart,
     over the last three years with known outcome, so every season is used
-    as a starting point three times. returns a dataframe with one row per origin and the
+    as a starting point three times. horizon is in weeks for every
+    resolution, so all resolutions use the same origins and forecast the same
+    length of time. a forecast whose whole horizon is not observed is
+    rejected, so all scores are based on complete horizons. returns a dataframe with one row per origin and the
     average in the attrs['mean'] dictionary.
     """
     series = pd.Series(target).dropna()
     if origins is None:
-        last = series.index.max() - pd.Timedelta(weeks=horizon)
+        #four extra weeks leave room for the last two or four week period at coarser resolutions
+        last = series.index.max() - pd.Timedelta(weeks=horizon + 4)
         origins = pd.date_range(end=last, periods=12, freq='13W')
     rows = []
     for origin in origins:
         origin = series.index[series.index <= origin].max()
         result = forecast_filling(series, exog, train_end=origin, horizon=horizon, **settings)
-        rows.append({'origin': origin.date(), 'seconds': result.seconds, **result.scores()})
+        scores = result.scores()
+        if scores.get('weeks_compared') != result.settings['steps']:
+            raise ValueError(f'The horizon after {origin.date()} is not fully observed.')
+        rows.append({'origin': origin.date(), 'seconds': result.seconds, **scores})
     table = pd.DataFrame(rows)
     table.attrs['mean'] = table.drop(columns='origin').mean(numeric_only=True).to_dict()
     return table

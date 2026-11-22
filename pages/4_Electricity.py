@@ -1,7 +1,8 @@
 """cross-border electricity flows (part 2 data in mongodb atlas) with interactive plotly charts.
 
 timestamps are stored in utc; they are shown in europe/oslo time here, and
-the month filter uses oslo months (see the timezone section in the part 4 notebook).
+the year is selected with the utc limits of the norwegian calendar year and the
+month filter uses oslo months (see the timezone section in the part 4 notebook).
 """
 import calendar
 import pandas as pd
@@ -10,6 +11,7 @@ import streamlit as st
 from pymongo.errors import PyMongoError
 from src import theme
 from src.data import mongo_collection
+from src.timezones import oslo_year_utc_limits
 from src.ui import page_header, show
 
 page_header('Explore', 'Electricity flows', 'Electricity imports and exports between Norway (NO2) and Denmark (DK1), '
@@ -18,8 +20,11 @@ page_header('Explore', 'Electricity flows', 'Electricity imports and exports bet
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def load_electricity_data(connection, year):
-    """all observations of one connection and year, with local (oslo) time added."""
-    cursor = mongo_collection().find({"connection": connection, "year": int(year)},
+    """all observations of one connection in one norwegian calendar year, with local (oslo) time added."""
+    #utc limits of the norwegian calendar year (the stored year field is computed in utc)
+    start, end = oslo_year_utc_limits(year)
+    cursor = mongo_collection().find({"connection": connection,
+                                      "timestamp": {"$gte": start.to_pydatetime(), "$lt": end.to_pydatetime()}},
                                      {"_id": 0, "connection": 1, "direction": 1, "timestamp": 1,
                                       "power_mw": 1, "energy_mwh": 1})
     df = pd.DataFrame(list(cursor))

@@ -294,14 +294,49 @@ def download_daily(latitudes, longitudes, start, end, variables=DAILY_VARIABLES,
     return [_parse_daily(p, variables) for p in payloads]
 
 
+#open meteo also limits the call units per minute (600 on the free plan); long periods are
+#therefore downloaded in pieces of one year, with pauses that keep below this limit
+UNITS_PER_MINUTE = 500
+
+
+def _daily_in_chunks(latitudes, longitudes, start, end, variables, session, pause=time.sleep):
+    """download a long period year by year, waiting when the per minute quota would be exceeded."""
+    start, end = pd.Timestamp(start), pd.Timestamp(end)
+    pieces, used, window_start = [], 0., time.monotonic()
+    chunk_start = start
+    while chunk_start <= end:
+        chunk_end = min(chunk_start + pd.DateOffset(years=1) - pd.Timedelta(days=1), end)
+        days = (chunk_end - chunk_start).days + 1
+        units = len(latitudes) * max(1, days / 14) * max(1, len(variables) / 10)
+        if used + units > UNITS_PER_MINUTE:
+            #wait until a new minute window starts before the next request
+            pause(max(0., 61 - (time.monotonic() - window_start)))
+            used, window_start = 0., time.monotonic()
+        try:
+            frames = download_daily(latitudes, longitudes, chunk_start, chunk_end, variables, session)
+        except WeatherRateLimit as error:
+            #the daily or hourly quota cannot be waited out here; only the minute limit is retried once
+            if 'Minutely' not in str(error):
+                raise
+            pause(61)
+            used, window_start = 0., time.monotonic()
+            frames = download_daily(latitudes, longitudes, chunk_start, chunk_end, variables, session)
+        used += units
+        pieces.append(frames)
+        chunk_start = chunk_end + pd.Timedelta(days=1)
+    return [pd.concat([piece[i] for piece in pieces]) for i in range(len(latitudes))]
+
+
 def download_daily_regions(regions, start, end, n_points=3, variables=DAILY_VARIABLES, session=None):
-    """regional daily means for several regions with a single api request.
+    """regional daily means for several regions, with all locations in each request.
 
     the first n_points sampled locations of every region are requested together
-    and averaged per region. returns a dict {region: daily dataframe}.
+    and averaged per region; periods longer than a year are split into yearly
+    requests. returns a dict {region: daily dataframe}.
     """
     points = pd.concat([load_points(r).head(int(n_points)) for r in regions], ignore_index=True)
-    frames = download_daily(points.latitude, points.longitude, start, end, variables, session)
+    session = session or requests.Session()
+    frames = _daily_in_chunks(points.latitude.tolist(), points.longitude.tolist(), start, end, variables, session)
     result = {}
     for region in regions:
         selected = [f for f, r in zip(frames, points.region) if r == region]

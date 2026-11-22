@@ -15,7 +15,7 @@ import streamlit as st
 from nve_api import load_reservoir_data
 from src import data
 from src.currency import weekly_rates
-from src.forecast import DEFAULTS, RESOLUTIONS, forecast_filling
+from src.forecast import DEFAULTS, DEFAULT_WEATHER, RESOLUTIONS, forecast_filling
 from src.geography import region_key
 from src.plots import forecast_figure
 from src.reservoir import weekly_series
@@ -78,11 +78,11 @@ with st.expander('Model settings', expanded=True):
                                                            value=DEFAULTS['learning_rate'])
 
 #exogenous variables
-with st.expander('Exogenous variables', expanded=False):
+with st.expander('Exogenous variables', expanded=True):
     sources = st.multiselect('Data sources', ['weather', 'currency', 'electricity'], default=list(DEFAULTS['exog']),
                              format_func={'weather': 'Weather (Open-Meteo ERA5)', 'currency': 'Exchange rates (Norges Bank)',
                                           'electricity': 'Net export NO2–DK1 (MongoDB, from Oct 2024)'}.get)
-    weather_variables = st.multiselect('Weather variables', DAILY_VARIABLES, default=['temperature_2m_mean', 'precipitation_sum'],
+    weather_variables = st.multiselect('Weather variables', DAILY_VARIABLES, default=list(DEFAULT_WEATHER),
                                        format_func=WEATHER_LABELS.get, disabled='weather' not in sources)
     future = st.radio('Exogenous values in the forecast period', ['climatology', 'observed'], horizontal=True,
                       format_func={'climatology': 'Estimated (weekly normal / last value)',
@@ -93,7 +93,7 @@ exog = {}
 first_day = f'{train_end.year - history_years - 1}-01-01'
 last_day = str(latest_era5_date().date())
 try:
-    with st.spinner('Downloading exogenous data...'):
+    with st.spinner('Downloading exogenous data (the first download of ten years of weather takes one to two minutes, then it is cached)...'):
         if 'weather' in sources and weather_variables:
             exog['weather'] = data.weekly_weather(region, first_day, last_day, 3)[weather_variables]
         if 'currency' in sources:
@@ -119,7 +119,7 @@ except ValueError as error:
 progress.empty()
 
 st.subheader(f'Forecast for {area_label(kind, area)}')
-title = f"{model.upper() if model == 'snarimax' else 'Lag based ML'} | trained to {result.history.index[-1]:%d.%m.%Y} | {horizon} periods"
+title = f"{model.upper() if model == 'snarimax' else 'Lag based ML'} | trained to {result.history.index[-1]:%d.%m.%Y} | {horizon} weeks ({result.settings['steps']} periods)"
 show(forecast_figure(result, title, animate=True))
 scores = result.scores()
 columns = st.columns(4)
